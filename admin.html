@@ -422,7 +422,7 @@ async function enter(){
     if(e&&e.code==="expired"){toLogin("Your session expired. Please log in again.");return false}
     return netFail(e);
   }
-  $("note").textContent="Showing all patients from the database.";
+  $("note").textContent="Showing all patients and booking requests from the database.";
   $("stage").hidden=true;$("gate").hidden=true;$("app").hidden=false;show();startBookings();showView("analytics");return true;
 }
 $("gate").addEventListener("submit",async function(e){
@@ -447,10 +447,10 @@ $("gate").addEventListener("submit",async function(e){
 });
 
 // ---------- Booking requests: reads public.bookings with the admin's own session (RLS decides), refreshes automatically ----------
-var BK_POLL=30000,BK=[],bkSeen=null,bkTimer=null,bkNew=0,bkFresh={};
+var BK_POLL=30000,BK=[],bkSig="",bkSeen=null,bkTimer=null,bkNew=0,bkFresh={};
 var BK_STATUS={requested:"Requested (not confirmed)",confirmed:"Confirmed by clinic",cancelled:"Cancelled",completed:"Completed"};
 function bkMsg(t){var m=$("bkMsg");m.hidden=!t;m.textContent=t||""}
-function stopBookings(){clearInterval(bkTimer);bkTimer=null;BK=[];bkSeen=null;bkNew=0;bkFresh={};document.title="Clinic admin";$("navBk").hidden=true}
+function stopBookings(){clearInterval(bkTimer);bkTimer=null;BK=[];bkSig="";bkSeen=null;bkNew=0;bkFresh={};document.title="Clinic admin";$("navBk").hidden=true}
 function startBookings(){
   stopBookings();bkTimer=setInterval(function(){if(!document.hidden)loadBookings()},BK_POLL);loadBookings();
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&TOK&&!$("app").hidden)loadBookings()});
@@ -466,6 +466,7 @@ async function loadBookings(){
     var ids={};j.forEach(function(b){ids[b.id]=1});
     if(bkSeen){var n=0;j.forEach(function(b){if(!bkSeen[b.id]){n++;bkFresh[b.id]=1}});if(n){bkNew+=n;$("bkNew").hidden=false;$("bkNew").textContent=bkNew+" new";$("navBk").hidden=false;$("navBk").textContent=bkNew;document.title="("+bkNew+") Clinic admin"}}
     bkSeen=Object.assign(bkSeen||{},ids);BK=j;bkMsg("");renderBookings();
+    var sig=j.map(function(b){return b.id}).join(",");if(sig!==bkSig){bkSig=sig;if(!$("app").hidden)show()}
     $("bkUpd").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+" · refreshes every "+Math.round(BK_POLL/1000)+" s";
   }catch(e){
     if(e&&e.code==="expired")return toLogin("Your session expired. Please log in again.");
@@ -851,11 +852,21 @@ $("rs").addEventListener("submit",async function(e){
   else $("gm").textContent="Could not reach the server to restore your session. Check your connection and reload.";
 })();
 function show(){
-  var log=REMOTE,users={},P={};
-  function get(e,n){return P[e]||(P[e]={name:n||"",email:e,phone:"",joined:"",events:[],reqs:[]})}
+  var log=REMOTE.slice(),users={},P={};
+  // Booking requests saved by the submit-booking function (table "bookings") count as patient requests too.
+  // A booking that was also logged in clinic_events (same email, treatment, date and time) is not counted twice.
+  var seen={};log.forEach(function(v){if(v.type==="request")seen[[String(v.email||"").toLowerCase(),v.service,v.date,v.time].join("|")]=1});
+  BK.forEach(function(b){
+    var em=String(b.email||"").trim().toLowerCase();if(!em)return;
+    if(seen[[em,b.service,b.req_date,b.req_time].join("|")])return;
+    log.push({t:b.created_at,type:"request",email:em,name:b.name,phone:b.phone,service:b.service,date:b.req_date,time:b.req_time,notes:b.notes,ref:b.ref});
+  });
+  log.sort(function(a,b){return a.t<b.t?-1:a.t>b.t?1:0});
+  function get(e,n){var k=String(e||"").toLowerCase();return P[k]||(P[k]={name:n||"",email:e,phone:"",joined:"",events:[],reqs:[]})}
   Object.keys(users).forEach(function(e){get(e,users[e].name)});
   log.forEach(function(v){
     var p=get(v.email,v.name);
+    if(!p.name&&v.name)p.name=v.name;
     if(!p.joined||v.t<p.joined)p.joined=v.t;
     p.events.push(v);
     if(v.type==="request"){p.reqs.push(v);if(v.phone)p.phone=v.phone}
@@ -881,7 +892,7 @@ function show(){
       var txt=fmt(v.t)+" — ";
       if(v.type==="signup")txt+="Signed up";
       else if(v.type==="login")txt+="Logged in"+(v.provider&&v.provider!=="email"?" with "+v.provider:"");
-      else txt+="Requested "+v.service+" for "+(v.date||"?")+" "+(v.time||"")+(v.notes?" · Note: "+v.notes:"");
+      else txt+="Requested "+v.service+" for "+(v.date||"?")+" "+(v.time||"")+(v.ref?" ("+v.ref+")":"")+(v.notes?" · Note: "+v.notes:"");
       h("div",txt,d);
     });
   });
