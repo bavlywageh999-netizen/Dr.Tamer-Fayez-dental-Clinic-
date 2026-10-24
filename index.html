@@ -1807,7 +1807,7 @@ window.CLINIC_CHAT_TURNSTILE_SITEKEY = "0x4AAAAAAFbTLBtJEGk_tryo";
       await request("send",{body,captcha,lang:document.documentElement.lang==="en"?"en":"ar"});
       needsCaptcha=false;
       input.value="";
-      showStatus("وصلت رسالتك للعيادة، هنرد عليك هنا أول ما نقدر.");
+      status.textContent="";status.style.display="none";   // message is already visible in the chat: no extra confirmation text
       pollMessages();
     }catch(error){showError(error)}
     finally{sending=false;sendButton.disabled=false}
