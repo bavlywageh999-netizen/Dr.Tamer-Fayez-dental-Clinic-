@@ -319,7 +319,7 @@ details div{font-size:.9rem;color:#456;margin-top:.25rem}
     </section>
     <section id="v-patients" class="view" hidden>
       <div class="vhead"><h1 class="pt">Patients</h1><button id="csv" type="button" class="pill">Download CSV</button></div>
-      <p class="warn" id="note">Loading…</p>
+      <p class="warn" id="note" hidden>Loading…</p>
       <div class="cards" id="cards"></div>
       <div class="panel"><h2 style="margin-top:0">Requests by treatment</h2><div id="chart"></div></div>
       <div class="panel"><h2 style="margin-top:0">Patients who joined</h2>
@@ -422,7 +422,7 @@ async function enter(){
     if(e&&e.code==="expired"){toLogin("Your session expired. Please log in again.");return false}
     return netFail(e);
   }
-  $("note").textContent="Showing all patients and booking requests from the database.";
+  $("note").hidden=true;$("note").textContent="";   // no banner when the data loaded normally
   $("stage").hidden=true;$("gate").hidden=true;$("app").hidden=false;show();startBookings();showView("analytics");return true;
 }
 $("gate").addEventListener("submit",async function(e){
