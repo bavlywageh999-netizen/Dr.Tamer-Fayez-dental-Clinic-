@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Dr. Tamer Fayez Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10242c;--sea:#0f3d4a;--foam:#e4f1ee;--pearl:#fbfdfc;--sun:#e9b44c;--line:#cfe0dc;--muted:#4f6a70;--danger:#b3382c;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--body:"Hanken Grotesk","Segoe UI",Tahoma,system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:linear-gradient(160deg,var(--sea),#164f5e);font-family:var(--body);color:var(--ink)}
+.card{background:var(--pearl);border-radius:22px;max-width:460px;width:100%;padding:1.6rem 1.5rem;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.brand{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;color:var(--sea);font-family:var(--display);font-weight:700}
+.brand i{width:2.2rem;height:2.2rem;border-radius:10px;background:var(--sun);display:grid;place-items:center;font-style:normal}
+h1{font-family:var(--display);font-size:1.45rem;line-height:1.25;margin:.2rem 0 .4rem}
+p{color:var(--muted);line-height:1.6;margin:.3rem 0 1rem}
+.stars{display:flex;gap:.35rem;justify-content:center;margin:1.1rem 0;direction:ltr}
+.stars button{border:0;background:none;font-size:2.6rem;line-height:1;cursor:pointer;color:#c9d6d3;padding:.1rem;transition:transform .12s}
+.stars button:hover,.stars button:focus-visible{transform:scale(1.15);outline:none}
+.stars button.on{color:var(--sun)}
+textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:12px;padding:.7rem .8rem;font:inherit;color:inherit;resize:vertical;background:#fff}
+.btn{display:block;width:100%;text-align:center;border:0;border-radius:999px;padding:.85rem 1.2rem;font:700 1rem var(--body);cursor:pointer;text-decoration:none;margin-top:.7rem}
+.btn.main{background:var(--sun);color:var(--ink)}.btn.alt{background:var(--sea);color:#fff}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.link{display:block;text-align:center;margin-top:.9rem;color:var(--sea);font-weight:600}
+.err{color:var(--danger);font-size:.92rem;min-height:1.2em;margin:.5rem 0 0}
+.ok{background:var(--foam);border-radius:12px;padding:.7rem .9rem;color:var(--sea);font-weight:600;margin:.8rem 0}
+.hide{display:none!important}
+.lang{float:inline-end;border:1px solid var(--line);background:#fff;border-radius:999px;padding:.2rem .7rem;font:600 .85rem var(--body);cursor:pointer;color:var(--sea)}
+</style>
+</head>
+<body>
+<main class="card" aria-live="polite">
+  <button class="lang" id="lang" type="button">English</button>
+  <div class="brand"><i aria-hidden="true">🦷</i><span id="brand"></span></div>
+
+  <section id="loading"><p id="tLoading"></p></section>
+  <section id="bad" class="hide"><h1 id="tBadH"></h1><p id="tBadP"></p></section>
+
+  <section id="rate" class="hide">
+    <h1 id="tHello"></h1><p id="tAsk"></p>
+    <div class="stars" id="stars" role="radiogroup"></div>
+    <p class="err" id="rateErr"></p>
+  </section>
+
+  <section id="after" class="hide">
+    <h1 id="tThanks"></h1>
+    <div id="lowBox" class="hide"><p id="tSorry"></p></div>
+    <label for="comment" class="hide" id="cLabel"></label>
+    <textarea id="comment" maxlength="1000"></textarea>
+    <button class="btn alt" id="send" type="button"></button>
+    <p class="ok hide" id="sent"></p>
+    <p class="err" id="afterErr"></p>
+    <a class="btn main" id="google" target="_blank" rel="noopener"></a>
+    <a class="link hide" id="googleLow" target="_blank" rel="noopener"></a>
+  </section>
+</main>
+
+<script>
+(function(){
+  var FN = "https://rxlbhnaumwnzmxbsmivq.supabase.co/functions/v1/review-flow";
+  var token = (new URLSearchParams(location.search).get("t") || "").toLowerCase();
+  var $ = function(id){ return document.getElementById(id); };
+  var lang = "ar", data = null, rating = 0;
+  var T = {
+    ar:{brand:"عيادة د. تامر فايز", loading:"جاري التحميل…", badH:"الرابط غير صالح", badP:"تأكد من الرابط الذي وصلك، أو تواصل مع العيادة.",
+        hello:function(n){ return "أهلاً " + n + "، إيه رأيك في زيارتك؟"; }, ask:"اختر عدد النجوم من ١ إلى ٥.",
+        thanks:"شكرًا لتقييمك!", sorry:"آسفين إن التجربة ما كانتش على قد توقعاتك. احكي لنا إيه اللي حصل علشان نصلحه — رسالتك توصل للعيادة فقط.",
+        cLabel:"رأيك (اختياري)", cHigh:"شاركنا أي ملاحظة (اختياري)", cLow:"إيه اللي حصل؟", send:"إرسال للعيادة", sent:"وصلت رسالتك للعيادة. شكرًا لك.",
+        google:"اكتب تقييمك على جوجل", googleLow:"أو انشر تقييمًا علنيًا على جوجل", err:"حصلت مشكلة. حاول مرة أخرى.", lang:"English"},
+    en:{brand:"Dr. Tamer Fayez Clinic", loading:"Loading…", badH:"This link is not valid", badP:"Check the link you received, or contact the clinic.",
+        hello:function(n){ return "Hi " + n + ", how was your visit?"; }, ask:"Choose from 1 to 5 stars.",
+        thanks:"Thank you for rating us!", sorry:"We're sorry your visit was not what you hoped for. Tell us what went wrong so we can fix it. Your message goes to the clinic only.",
+        cLabel:"Your feedback (optional)", cHigh:"Anything we can improve? (optional)", cLow:"What went wrong?", send:"Send to the clinic", sent:"Your message reached the clinic. Thank you.",
+        google:"Write your review on Google", googleLow:"Or post a public review on Google", err:"Something went wrong. Please try again.", lang:"العربية"}
+  };
+  function call(body){
+    body.token = token;
+    return fetch(FN, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); });
+  }
+  function render(){
+    var L = T[lang]; document.documentElement.lang = lang; document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    $("lang").textContent = L.lang; $("brand").textContent = L.brand; $("tLoading").textContent = L.loading;
+    $("tBadH").textContent = L.badH; $("tBadP").textContent = L.badP;
+    if(data){ $("tHello").textContent = L.hello(data.first_name); $("tAsk").textContent = L.ask; }
+    $("tThanks").textContent = L.thanks; $("tSorry").textContent = L.sorry; $("send").textContent = L.send; $("sent").textContent = L.sent;
+    $("google").textContent = L.google; $("googleLow").textContent = L.googleLow; $("cLabel").textContent = L.cLabel;
+    $("comment").placeholder = rating && rating <= 3 ? L.cLow : L.cHigh;
+    document.title = L.brand;
+  }
+  function show(id){ ["loading","bad","rate","after"].forEach(function(s){ $(s).classList.toggle("hide", s !== id); }); }
+  function paintStars(n){ [].forEach.call($("stars").children, function(b, i){ b.classList.toggle("on", i < n); b.setAttribute("aria-checked", String(i + 1 === n)); }); }
+  function afterRating(){
+    var low = rating <= 3;
+    show("after");
+    $("lowBox").classList.toggle("hide", !low);
+    $("cLabel").classList.remove("hide");
+    $("google").href = data.google_url; $("googleLow").href = data.google_url;
+    $("google").classList.toggle("hide", low);          // low rating: the private box comes first, Google stays one tap away
+    $("googleLow").classList.toggle("hide", !low);
+    $("send").classList.toggle("alt", true);
+    render();
+    if(low) $("comment").focus();
+  }
+  for(var i = 1; i <= 5; i++){
+    (function(n){
+      var b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.setAttribute("aria-label", n + " / 5"); b.textContent = "★";
+      b.onclick = function(){
+        rating = n; paintStars(n); $("rateErr").textContent = "";
+        call({action:"submit", rating:n}).then(function(r){
+          if(!r.ok){ $("rateErr").textContent = T[lang].err; return; }
+          afterRating();
+        }).catch(function(){ $("rateErr").textContent = T[lang].err; });
+      };
+      $("stars").appendChild(b);
+    })(i);
+  }
+  $("send").onclick = function(){
+    var text = $("comment").value.trim(); if(!text) return;
+    $("send").disabled = true; $("afterErr").textContent = "";
+    call({action:"submit", comment:text}).then(function(r){
+      if(!r.ok){ $("afterErr").textContent = T[lang].err; $("send").disabled = false; return; }
+      $("sent").classList.remove("hide"); $("comment").disabled = true;
+    }).catch(function(){ $("afterErr").textContent = T[lang].err; $("send").disabled = false; });
+  };
+  function trackGoogle(){ call({action:"google"}).catch(function(){}); }
+  $("google").addEventListener("click", trackGoogle); $("googleLow").addEventListener("click", trackGoogle);
+  $("lang").onclick = function(){ lang = lang === "ar" ? "en" : "ar"; render(); };
+
+  if(!/^[0-9a-f]{64}$/.test(token)){ show("bad"); render(); return; }
+  call({action:"get"}).then(function(r){
+    if(!r.ok || !r.j.ok){ show("bad"); render(); return; }
+    data = r.j; lang = data.lang === "en" ? "en" : "ar";
+    if(data.rated){ rating = data.rating; paintStars(rating); afterRating(); } else { show("rate"); render(); }
+  }).catch(function(){ show("bad"); render(); });
+})();
+</script>
+</body>
+</html>
