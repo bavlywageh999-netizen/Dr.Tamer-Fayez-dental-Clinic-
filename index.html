@@ -395,6 +395,21 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
 .a-row .a-ck input{-webkit-appearance:checkbox;appearance:auto;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:var(--sea-2)}
 #retryNotify[hidden],#wa[hidden],#submitBooking[hidden]{display:none}
 #cfBox{margin-top:.6rem}
+
+/* ---- My appointments + live reviews ---- */
+.mine{position:fixed;inset:0;z-index:85;background:rgba(16,36,44,.55);display:flex;align-items:center;justify-content:center;padding:1rem}
+.mine[hidden]{display:none}
+.mine .box{background:var(--pearl);color:var(--ink);border-radius:18px;max-width:520px;width:100%;max-height:86vh;overflow:auto;padding:1.2rem 1.3rem;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mine .top{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.mine h3{font-family:var(--display);font-size:1.25rem;margin:0}
+.mine h4{font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .2rem}
+.mine .x{border:0;background:var(--foam);color:var(--ink);width:2rem;height:2rem;border-radius:50%;font-size:1.1rem;cursor:pointer}
+.mine .row{border:1px solid var(--line);border-radius:12px;padding:.65rem .85rem;margin:.45rem 0;display:flex;justify-content:space-between;gap:.8rem;align-items:flex-start}
+.mine .row small{display:block;color:var(--muted)}
+.mine .chip{font-size:.76rem;font-weight:700;border-radius:999px;padding:.15rem .6rem;white-space:nowrap;background:var(--foam)}
+.mine .chip.confirmed{background:#d6f0dc;color:#14532d}.mine .chip.cancelled{background:#f8d9d5;color:#7f1d1d}
+.mine .chip.completed{background:#dfe7fb;color:#1e3a8a}.mine .chip.requested{background:#fff1c7;color:#6b4f00}
+.mine .empty{color:var(--muted);margin:1rem 0 .4rem}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;max-width:min(92vw,520px);display:flex;gap:.8rem;align-items:flex-start;padding:.85rem 1.1rem;border-radius:14px;color:#fff;box-shadow:0 14px 40px rgba(0,0,0,.28);font-size:.95rem;line-height:1.45}
 .toast[hidden]{display:none}
 .toast.ok{background:#14733a}.toast.warn{background:#7a5b00}.toast.bad{background:#b3261e}
@@ -565,6 +580,8 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     <p class="sample">These are sample reviews and names. Replace them with real patient reviews (with permission) before publishing.</p>
   </div>
 </section>
+
+<div class="mine" id="mine" data-dyn hidden role="dialog" aria-modal="true" aria-labelledby="mineTitle"><div class="box" id="mineBox"></div></div>
 
 <section class="booking" id="book-section">
   <div class="wrap">
@@ -769,6 +786,14 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   // ---- Language (English / Arabic) ----
   var AR = {"Dr. Tamer Fayez": "د. تامر فايز", "Dental Clinic, Alexandria": "عيادة أسنان، الإسكندرية", "Services": "الخدمات", "Your dentist": "الطبيب", "Reviews": "آراء المرضى", "Visit us": "زورونا", "Book a visit": "احجز موعدك", "Dental care in Alexandria that feels unhurried.": "رعاية أسنان في الإسكندرية بلا استعجال.", "From a routine check-up to implants and braces, Dr. Tamer Fayez explains every step before it starts and treats you at your pace.": "من الكشف الدوري إلى الزراعة والتقويم، يشرح لك د. تامر فايز كل خطوة قبل أن تبدأ، ويعالجك بالوتيرة التي تناسبك.", "Book an appointment": "احجز موعدًا", "See treatments": "شاهد العلاجات", "Trusted & Certified": "موثوق ومعتمد", "Latest Technology": "أحدث التقنيات", "Pain-Free Experience": "تجربة بلا ألم", "Treatments, in plain terms": "علاجاتنا بكل وضوح", "Every plan starts with an examination and a clear explanation of your options and costs.": "كل خطة علاج تبدأ بفحص وشرح واضح للخيارات والتكلفة.", "Check-up and cleaning": "الكشف والتنظيف", "Examination, scale and polish, and advice to keep gums and teeth healthy between visits.": "فحص شامل وإزالة الجير والتلميع، مع نصائح للحفاظ على صحة اللثة والأسنان بين الزيارات.", "Every 6 months": "كل 6 أشهر", "Teeth whitening": "تبييض الأسنان", "Safe in-clinic whitening for a brighter shade, with guidance on keeping the result.": "تبييض آمن داخل العيادة للحصول على لون أفتح، مع إرشادات للحفاظ على النتيجة.", "1 visit": "زيارة واحدة", "Fillings and repairs": "الحشوات والترميم", "Tooth-coloured fillings that match your teeth, plus repair of chips and cracks.": "حشوات بلون الأسنان الطبيعي، وإصلاح الكسور والتشققات البسيطة.", "Same day": "في نفس اليوم", "Crowns, bridges and dentures": "التيجان والجسور وطقم الأسنان", "Fixed and removable restorations made to match the colour and shape of your own teeth.": "تركيبات ثابتة ومتحركة تُصنع لتطابق لون أسنانك وشكلها.", "Made to fit": "بمقاس دقيق", "Root canal treatment": "علاج قناة الجذر", "Relieves infection and pain while keeping your natural tooth.": "يزيل العدوى والألم مع الحفاظ على سنّك الطبيعية.", "1 to 3 visits": "من 1 إلى 3 زيارات", "Braces and aligners": "التقويم والمقوّمات الشفافة", "Straightening for teenagers and adults, with regular reviews to track progress.": "تقويم للمراهقين والبالغين، مع متابعة دورية لتقدّم العلاج.", "Months": "أشهر", "Dental implants": "زراعة الأسنان", "A fixed replacement for missing teeth that looks and works like your own.": "بديل ثابت للأسنان المفقودة يبدو ويعمل مثل أسنانك الطبيعية.", "Planned in stages": "على مراحل", "Gum treatment and surgery": "علاج اللثة وجراحتها", "Treatment for bleeding, swollen or receding gums, including minor gum surgery.": "علاج نزيف اللثة وتورمها وانحسارها، بما في ذلك جراحات اللثة البسيطة.", "As needed": "حسب الحاجة", "Veneers and smile design": "الفينير وتصميم الابتسامة", "E-max and zirconia veneers and crowns that reshape your smile and look natural.": "فينير وتيجان إيماكس وزركون تعيد تشكيل ابتسامتك بمظهر طبيعي.", "2 visits": "زيارتان", "Meet Dr. Tamer Fayez": "تعرّف على د. تامر فايز", "Dr. Fayez is a consultant in cosmetic and fixed prosthodontics and dental implants. He is known in Alexandria for smile design and for restoring teeth so they look and feel natural.": "د. فايز استشاري التركيبات التجميلية والثابتة وزراعة الأسنان. يُعرف في الإسكندرية بتصميم الابتسامة وترميم الأسنان لتبدو وتبدو طبيعية.", "He takes time to understand what worries you, shows you what he sees, and only then recommends treatment.": "يخصّص وقتًا ليفهم ما يقلقك، ويُريك ما يراه، ثم يقترح العلاج المناسب.", "Consultant in cosmetic and fixed prosthodontics and implants": "استشاري التركيبات التجميلية والثابتة والزراعة", "Smile design with E-max veneers and zirconia": "تصميم الابتسامة بفينير إيماكس والزركون", "Trusted by patients: 4.9 stars from 84 Google reviews": "موضع ثقة المرضى: 4.9 نجوم من 84 تقييمًا على Google", "What patients say": "آراء المرضى", "Honest words from people who trusted us with their smiles.": "كلمات صادقة ممن وثقوا بنا في ابتسامتهم.", "from 84 Google reviews": "من 84 تقييمًا على Google", "View all Google reviews": "عرض كل التقييمات على Google", "Write your review": "اكتب تقييمك", "These are sample reviews and names. Replace them with real patient reviews (with permission) before publishing.": "هذه تقييمات وأسماء تجريبية. استبدلها بتقييمات حقيقية من المرضى (بموافقتهم) قبل النشر.", "Book your appointment": "احجز موعدك", "Call or message us on WhatsApp, or send a request with the form and we will confirm your visit.": "اتصل بنا أو راسلنا على واتساب، أو أرسل طلبك من النموذج وسنؤكد لك الموعد.", "Call 015 5627 7801": "اتصل ⁦015 5627 7801⁩", "Chat on WhatsApp": "تحدّث معنا على واتساب", "Choose a time and we will confirm it by phone or WhatsApp.": "اختر الوقت وسنؤكده معك بالهاتف أو واتساب.", "Full name": "الاسم بالكامل", "Mobile number": "رقم الموبايل", "Treatment": "العلاج", "Choose a treatment": "اختر العلاج", "Toothache or emergency": "ألم أسنان أو حالة طارئة", "Preferred date": "التاريخ المفضل", "Preferred time": "الوقت المفضل", "Anything we should know? (optional)": "هل هناك شيء تودّ إخبارنا به؟ (اختياري)", "Request appointment": "أرسل طلب الحجز", "This is a request. Your appointment is confirmed once we contact you.": "هذا طلب حجز. يتم تأكيد موعدك بعد أن نتواصل معك.", "Request ready": "طلبك جاهز", "Send it on WhatsApp so the clinic receives it right away.": "أرسله عبر واتساب لتصل التفاصيل إلى العيادة فورًا.", "Send on WhatsApp": "أرسل عبر واتساب", "Change details": "تعديل البيانات", "Find the clinic": "موقع العيادة", "Open the map for directions from wherever you are in Alexandria.": "افتح الخريطة لمعرفة الطريق من أي مكان في الإسكندرية.", "Open in Google Maps": "افتح في خرائط Google", "Tamer Fayez dental clinic": "عيادة د. تامر فايز لطب الأسنان", "84 Google reviews": "84 تقييمًا على Google", "Dental clinic in Alexandria": "عيادة أسنان في الإسكندرية", "Get directions": "احصل على الاتجاهات", "Visit the clinic": "زورونا في العيادة", "Address": "العنوان", "38 El-Mosheer Ahmed Ismail St, 2nd floor, Sidi Gaber, Alexandria, Egypt": "38 شارع المشير أحمد إسماعيل، الدور الثاني، سيدي جابر، الإسكندرية، مصر", "Book by phone": "للحجز بالهاتف", "WhatsApp": "واتساب", "Message the clinic": "راسل العيادة", "Other numbers": "أرقام أخرى", "(landline)": "(أرضي)", "Follow us": "تابعنا", "Facebook": "فيسبوك", "Instagram": "إنستجرام", "Working hours": "مواعيد العمل", "Saturday": "السبت", "Sunday": "الأحد", "Monday": "الاثنين", "Tuesday": "الثلاثاء", "Wednesday": "الأربعاء", "Thursday": "الخميس", "Friday": "الجمعة", "12:00 PM – 10:00 PM": "12:00 ظهرًا – 10:00 مساءً", "Closed": "مغلق", "Closed Thursday and Friday": "مغلق الخميس والجمعة", "Open now · Closes 10:00 PM": "مفتوح الآن · يُغلق 10:00 مساءً", "Closed now · Opens today at 12:00 PM": "مغلق الآن · يفتح اليوم 12:00 ظهرًا", "Toothache? Call us and we will fit you in as soon as we can.": "ألم في الأسنان؟ اتصل بنا وسنحجز لك أقرب موعد ممكن.", "Dr. Tamer Fayez Dental Clinic, Alexandria": "عيادة د. تامر فايز لطب الأسنان، الإسكندرية", "Back to top": "العودة للأعلى", "Dr. Tamer Fayez smiling in dark scrubs": "د. تامر فايز مبتسمًا ويرتدي ملابس العمليات الداكنة",  "Meet your dentist": "تعرّف على طبيبك", "Patient rating": "تقييم المرضى", "Consultant in cosmetic and fixed prosthodontics and dental implants.": "استشاري التركيبات التجميلية والثابتة وزراعة الأسنان.", "Known in Alexandria for smile design and restoring teeth so they look and feel natural. He takes time to understand what worries you, shows you what he sees, and only then recommends treatment.": "يُعرف في الإسكندرية بتصميم الابتسامة وترميم الأسنان لتبدو طبيعية ويُحسّ بها كذلك. يخصّص وقتًا ليفهم ما يقلقك، ويُريك ما يراه، ثم يقترح العلاج المناسب.", "Consultant in cosmetic and fixed prosthodontics": "استشاري التركيبات التجميلية والثابتة", "Trusted by patients across Alexandria": "موضع ثقة المرضى في الإسكندرية", "Plan your visit": "خطط لزيارتك",  "Enter your full name.": "أدخل اسمك بالكامل.", "Enter a valid Egyptian mobile number, for example 01012345678.": "أدخل رقم موبايل مصري صحيح، مثل 01012345678.", "Choose a date.": "اختر التاريخ.", "Choose today or a later date.": "اختر اليوم أو تاريخًا لاحقًا.", "The clinic is closed on Thursdays and Fridays. Choose another day.": "العيادة مغلقة يومي الخميس والجمعة. اختر يومًا آخر.", "Choose a time.": "اختر الوقت.", "Choose a treatment.": "اختر العلاج.", "Name": "الاسم", "Phone": "الهاتف", "Date": "التاريخ", "Time": "الوقت", "Dr. Tamer Fayez Dental Clinic, home": "عيادة د. تامر فايز لطب الأسنان، الرئيسية", "Main": "القائمة الرئيسية", "5 out of 5 stars": "5 من 5 نجوم", "4.9 out of 5 stars": "4.9 من 5 نجوم", "Dr. Tamer Fayez smiling, wearing dark scrubs": "د. تامر فايز مبتسمًا ويرتدي ملابس العمليات الداكنة", "Map showing Tamer Fayez Dental Clinic in Sidi Gaber, Alexandria": "خريطة توضح موقع عيادة د. تامر فايز في سيدي جابر، الإسكندرية", "Switch to Arabic": "التبديل إلى العربية", "Switch to English": "Switch to English", "Dr. Tamer Fayez Dental Clinic | Alexandria": "عيادة د. تامر فايز لطب الأسنان | الإسكندرية", "Dr. Tamer Fayez Dental Clinic in Alexandria. Check-ups, whitening, implants, braces and more. Book your appointment online.": "عيادة د. تامر فايز لطب الأسنان في الإسكندرية. كشف وتبييض وزراعة وتقويم وأكثر. احجز موعدك أونلاين."};
 
+  AR["The clinic is closed on this day. Choose another day."] = "العيادة مغلقة في هذا اليوم. اختر يومًا آخر.";
+  AR["No free times on this day. Choose another day."] = "لا توجد مواعيد متاحة في هذا اليوم. اختر يومًا آخر.";
+  AR["Already booked"] = "محجوز";
+  AR["My appointments"] = "مواعيدي";
+  AR["Upcoming"] = "القادمة"; AR["Past"] = "السابقة"; AR["Close"] = "إغلاق";
+  AR["Requested"] = "قيد المراجعة"; AR["Confirmed"] = "مؤكد"; AR["Cancelled"] = "ملغي"; AR["Completed"] = "تمت";
+  AR["No appointments yet on this device. Book a visit and it will appear here."] = "لا توجد مواعيد على هذا الجهاز بعد. احجز زيارة وستظهر هنا.";
+  AR["Could not load your appointments. Try again."] = "تعذّر تحميل مواعيدك. حاول مرة أخرى.";
   AR["Enter a valid Egyptian mobile number (11 digits starting with 010, 011, 012 or 015)."] = "اكتب رقم موبايل مصري صحيح (11 رقم يبدأ بـ 010 أو 011 أو 012 أو 015).";
   AR["This phone number looks invalid. Enter the real mobile number the clinic can reach you on."] = "رقم الموبايل يبدو غير صحيح. اكتب رقمك الحقيقي الذي تستطيع العيادة الاتصال بك عليه.";
   AR["Your account email is not a valid address. Log out and sign up again with a correct email."] = "الإيميل المسجّل به غير صحيح. سجّل الخروج ثم أنشئ حسابًا بإيميل صحيح.";  Object.assign(AR,{"Log in":"تسجيل الدخول","Sign up":"إنشاء حساب","Log in to book":"سجّل الدخول لإرسال الطلب","Create your account":"أنشئ حسابك","Email":"البريد الإلكتروني","Password":"كلمة المرور","or":"أو","Close":"إغلاق","Show password":"إظهار كلمة المرور","Continue with Google":"المتابعة بحساب Google","Continue with Apple":"المتابعة بحساب Apple","Enter a valid email address.":"أدخل بريدًا إلكترونيًا صحيحًا.","Password must be at least 6 characters.":"كلمة المرور 6 أحرف على الأقل.","Wrong email or password.":"البريد أو كلمة المرور غير صحيحة.","This email already has an account. Please log in.":"هذا البريد لديه حساب بالفعل. سجّل الدخول.","Social sign-in is not connected yet. Please use email for now.":"الدخول عبر Google وApple غير مفعّل بعد. استخدم البريد الإلكتروني حاليًا.","Signed in as":"مسجّل الدخول باسم","Log out":"تسجيل الخروج","TikTok":"تيك توك","Your recent requests":"طلباتك السابقة","Review your request":"راجع طلبك","Check your details, then press Submit to send your request.":"راجع بياناتك ثم اضغط إرسال لإرسال طلبك.","Submit":"إرسال","Submitting…":"جارٍ الإرسال…","Send a WhatsApp message to the clinic":"أرسل رسالة واتساب إلى العيادة","Your request was received and the confirmation email was sent to":"تم استلام طلبك وأُرسلت رسالة التأكيد إلى","The clinic was notified on WhatsApp.":"تم إشعار العيادة عبر واتساب.","Your request was received. Email confirmation is not available right now.":"تم استلام طلبك. تأكيد البريد الإلكتروني غير متاح حاليًا.","Your request was received, but the confirmation email could not be sent.":"تم استلام طلبك، لكن تعذّر إرسال رسالة التأكيد بالبريد الإلكتروني.","Your request was saved.":"تم حفظ طلبك.","Your request was saved. Email and automatic WhatsApp notifications are not active yet.":"تم حفظ طلبك. البريد التلقائي وإشعار واتساب التلقائي غير مفعّلين بعد.","Email confirmation and automatic WhatsApp notification are not active yet. You can also notify the clinic on WhatsApp.":"تأكيد البريد الإلكتروني وإشعار واتساب التلقائي غير مفعّلين بعد. يمكنك أيضًا إشعار العيادة عبر واتساب.","We could not save your request. Please press Submit again.":"تعذّر حفظ طلبك. يرجى الضغط على إرسال مرة أخرى.","We could not reach the clinic's system, so your request is NOT saved yet. Your details are kept - press Submit again.":"تعذّر الاتصال بنظام العيادة، لذلك لم يتم حفظ طلبك بعد. بياناتك محفوظة - اضغط إرسال مرة أخرى.","The clinic's system had a problem, so your request is NOT saved yet. Press Submit again or contact the clinic on WhatsApp.":"حدثت مشكلة في نظام العيادة، لذلك لم يتم حفظ طلبك بعد. اضغط إرسال مرة أخرى أو تواصل مع العيادة عبر واتساب.","The security check could not be completed. Please press Submit again.":"تعذّر إكمال الفحص الأمني. يرجى الضغط على إرسال مرة أخرى.","Please wait a minute before trying again. If it keeps failing, contact the clinic on WhatsApp.":"يرجى الانتظار دقيقة قبل المحاولة مرة أخرى. إذا استمر الفشل فتواصل مع العيادة عبر واتساب.","Your appointment request was saved.":"تم حفظ طلب موعدك.","Reference:":"رقم الحجز:","Reference":"رقم الحجز","This is a request - the appointment is not confirmed until the clinic confirms it.":"هذا طلب موعد، ولا يُعتبر الموعد مؤكدًا إلا بعد أن تؤكده العيادة.","A confirmation email was accepted for sending to your email address. Check your inbox and spam folder.":"تم قبول رسالة التأكيد للإرسال إلى بريدك الإلكتروني. تحقق من صندوق الوارد ومجلد الرسائل غير المرغوبة.","Your request was saved, but the confirmation email could not be sent.":"تم حفظ طلبك، لكن تعذّر إرسال رسالة التأكيد بالبريد الإلكتروني.","Email confirmation is not available right now.":"تأكيد البريد الإلكتروني غير متاح حاليًا.","The confirmation email is still being prepared.":"رسالة التأكيد ما زالت قيد التجهيز.","The clinic was notified on WhatsApp automatically.":"تم إشعار العيادة تلقائيًا عبر واتساب.","We could not notify the clinic automatically. Please send the prepared message below on WhatsApp.":"تعذّر إشعار العيادة تلقائيًا. يرجى إرسال الرسالة الجاهزة أدناه عبر واتساب.","You can also send the prepared message on WhatsApp below. It is only sent when you press Send in WhatsApp.":"يمكنك أيضًا إرسال الرسالة الجاهزة عبر واتساب أدناه. لا تُرسل إلا عند الضغط على إرسال في واتساب.","We could not reach the clinic's system, so your request is NOT saved yet. Your details are kept - tap Try again.":"تعذّر الاتصال بنظام العيادة، لذلك لم يتم حفظ طلبك بعد. بياناتك محفوظة - اضغط حاول مرة أخرى.","The clinic's system had a problem, so your request is NOT saved yet. Tap Try again or contact the clinic on WhatsApp.":"حدثت مشكلة في نظام العيادة، لذلك لم يتم حفظ طلبك بعد. اضغط حاول مرة أخرى أو تواصل مع العيادة عبر واتساب.","Too many requests from this email. Please wait a while or contact the clinic on WhatsApp.":"طلبات كثيرة من هذا البريد. يرجى الانتظار قليلًا أو التواصل مع العيادة عبر واتساب.","The clinic's system rejected some details. Please go back, check them and try again.":"رفض نظام العيادة بعض البيانات. يرجى الرجوع ومراجعتها ثم المحاولة مرة أخرى.","Could not reach the clinic's system. Try again.":"تعذّر الاتصال بنظام العيادة. حاول مرة أخرى.","Retry email and clinic notification":"إعادة إرسال البريد وإشعار العيادة","Remember me":"تذكرني","Forgot password?":"نسيت كلمة المرور؟","Set a new password":"اختر كلمة مرور جديدة","Save password":"حفظ كلمة المرور","Password saved. You can log in now.":"تم حفظ كلمة المرور. يمكنك تسجيل الدخول الآن.","Password reset by email is not switched on yet. Please contact the clinic on WhatsApp.":"إعادة تعيين كلمة المرور بالبريد غير مفعّلة بعد. يرجى التواصل مع العيادة عبر واتساب.","Type your email first, then tap Forgot password.":"اكتب بريدك الإلكتروني أولًا ثم اضغط نسيت كلمة المرور.","If this email has an account, a reset link was sent. Check your inbox and spam.":"إذا كان لهذا البريد حساب، فقد أُرسل رابط إعادة التعيين. تحقق من الوارد والرسائل غير المرغوبة.","Could not send the email right now. Please contact the clinic on WhatsApp.":"تعذّر إرسال البريد الآن. يرجى التواصل مع العيادة عبر واتساب.","Could not reach the server. Try again.":"تعذّر الاتصال بالخادم. حاول مرة أخرى.","Could not save the password. The link may have expired.":"تعذّر حفظ كلمة المرور. ربما انتهت صلاحية الرابط.","Too many attempts. Please wait a few minutes.":"محاولات كثيرة. انتظر بضع دقائق.","Try again":"حاول مرة أخرى","Your request was recorded in the clinic's system.":"تم تسجيل طلبك في نظام العيادة.","We could not record your request in our system. Please send it on WhatsApp so the clinic receives it, or try again.":"تعذّر تسجيل طلبك في نظامنا. أرسله عبر واتساب ليصل إلى العيادة، أو حاول مرة أخرى.","Admin":"الإدارة"});
@@ -912,16 +937,49 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   }
 
   // Disable times that already passed when today is selected
+  function dayClosed(v){
+    if(!v) return false;
+    if(OPEN_DAYS.indexOf(dateFromInput(v).getDay()) === -1) return true;
+    return !!(AVAIL && AVAIL.closed && AVAIL.closed.indexOf(v) > -1);
+  }
+  function dayFull(v){
+    if(!v || !AVAIL || !AVAIL.days || !AVAIL.days[v] || dayClosed(v)) return false;
+    return SLOTS.every(function(sl){ return AVAIL.days[v].indexOf(sl.toLowerCase()) > -1; });
+  }
   function refreshSlots(){
     var v = dateEl.value;
     var isToday = v === iso(new Date());
     var now = new Date();
+    var taken = (AVAIL && AVAIL.days && AVAIL.days[v]) || [], closed = dayClosed(v);
     slotsEl.querySelectorAll("input").forEach(function(inp){
       var m = /(\d+):(\d+)\s*(am|pm)/i.exec(inp.value);
       var h = +m[1] % 12 + (m[3].toLowerCase()==="pm" ? 12 : 0);
-      inp.disabled = isToday && (h <= now.getHours());
+      var full = taken.indexOf(inp.value.toLowerCase()) > -1;
+      inp.disabled = closed || full || (isToday && (h <= now.getHours()));
+      if(inp.nextSibling) inp.nextSibling.title = full ? t("Already booked") : "";
       if(inp.disabled && inp.checked) inp.checked = false;
     });
+  }
+  // Opening days, time slots, days off and full times come from the clinic's calendar (admin > Calendar).
+  var AVAIL = null;
+  function loadAvailability(){
+    try{
+      var to = new Date(); to.setDate(to.getDate() + 366);
+      fetch(SBU + "/rest/v1/rpc/slot_availability", {method:"POST", headers:{apikey:SBK, Authorization:"Bearer " + SBK, "Content-Type":"application/json"},
+        body:JSON.stringify({p_from:iso(new Date()), p_to:iso(to)})})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if(!j || !Array.isArray(j.slot_times) || !j.slot_times.length || !Array.isArray(j.open_days)) return;   // keep the built-in defaults if the calendar is unreachable
+        AVAIL = j; OPEN_DAYS = j.open_days;
+        var mx = new Date(); mx.setDate(mx.getDate() + (j.max_days_ahead || 90)); dateEl.max = iso(mx);
+        var chosen = (form.querySelector('input[name="time"]:checked') || {}).value;
+        SLOTS = j.slot_times; renderSlots();
+        if(chosen){ var again = slotsEl.querySelector('input[value="' + chosen + '"]'); if(again) again.checked = true; }
+        refreshSlots();
+        var v = dateEl.value;
+        if(v) setErr("date", dayClosed(v) ? t("The clinic is closed on this day. Choose another day.") : dayFull(v) ? t("No free times on this day. Choose another day.") : "");
+      }).catch(function(){});
+    }catch(e){}
   }
   dateEl.addEventListener("change", refreshSlots);
 
@@ -930,6 +988,8 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     var v = dateEl.value;
     if(v && v < dateEl.min){ dateEl.value = ""; setErr("date", t("Choose today or a later date.")); refreshSlots(); }
     else if(v && v > dateEl.max){ dateEl.value = ""; setErr("date", t("Choose a date.")); refreshSlots(); }
+    else if(dayClosed(v)) setErr("date", t("The clinic is closed on this day. Choose another day."));
+    else if(dayFull(v)) setErr("date", t("No free times on this day. Choose another day."));
     else setErr("date", "");
   });
 
@@ -983,7 +1043,8 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
       var d = dateFromInput(dateEl.value);
       var t0 = new Date(); t0.setHours(0,0,0,0);
       if(d < t0) fail("date",t("Choose today or a later date."), dateEl);
-      else if(OPEN_DAYS.indexOf(d.getDay()) === -1) fail("date",t("The clinic is closed on Thursdays and Fridays. Choose another day."), dateEl);
+      else if(dayClosed(dateEl.value)) fail("date",t("The clinic is closed on this day. Choose another day."), dateEl);
+      else if(dayFull(dateEl.value)) fail("date",t("No free times on this day. Choose another day."), dateEl);
     }
 
     if(!form.querySelector('input[name="time"]:checked')) fail("time",t("Choose a time."), slotsEl.querySelector("input:not(:disabled)") || slotsEl);
@@ -1177,6 +1238,8 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
           var cap = TURNSTILE_SITEKEY ? await getCaptcha() : null;
           if(TURNSTILE_SITEKEY && !cap) booking = {saved:false, reason:"captcha", detail:captchaWhy || "no-token"};
           else booking = interpret(await callBooking({action:"create", id:bookingId, name:lastData.name, email:u.email, phone:lastData.phone, service:lastData.service, date:dateEl.value, time:lastData.timeVal, notes:lastData.notes, lang:lang, captcha:cap}));
+          if(booking.saved && booking.token) rememberBooking(u.email, {id:bookingId, ref:booking.ref, token:booking.token});
+          if(booking.reason === "invalid") loadAvailability();
           if(booking.saved) logEvent("request", {phone:lastData.phone, service:lastData.service, date:dateEl.value, time:lastData.timeVal, notes:lastData.notes}, true);
         }
         finishAuto();
@@ -1372,6 +1435,81 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
       box.appendChild(d);
     });
   }
+
+  // ---- My appointments: the patient's bookings made on this device while signed in. The booking's secret token proves they are hers. ----
+  function bkKey(email){ return "clinic-bk:" + String(email || "").toLowerCase(); }
+  function rememberBooking(email, item){
+    try{
+      var k = bkKey(email), list = JSON.parse(localStorage.getItem(k) || "[]");
+      if(!list.some(function(x){ return x.id === item.id; })) list.push(item);
+      localStorage.setItem(k, JSON.stringify(list.slice(-20)));
+    }catch(e){}
+  }
+  var STATUS_TXT = {requested:"Requested", confirmed:"Confirmed", cancelled:"Cancelled", completed:"Completed"};
+  function mineRow(b){
+    var row = document.createElement("div"); row.className = "row";
+    var left = document.createElement("div"), d = dateFromInput(b.date), s1 = document.createElement("strong"), s2 = document.createElement("small");
+    s1.textContent = t(b.service);
+    s2.textContent = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", {weekday:"long", day:"numeric", month:"long"}) + " · " + slotLabel(String(b.time).toLowerCase()) + " · " + b.ref;
+    left.appendChild(s1); left.appendChild(s2);
+    var chip = document.createElement("span"); chip.className = "chip " + b.status; chip.textContent = t(STATUS_TXT[b.status] || b.status);
+    row.appendChild(left); row.appendChild(chip); return row;
+  }
+  async function openMine(){
+    var u = getUser(); if(!u){ openAuth(); return; }
+    var m = $("mine"), box = $("mineBox"); m.hidden = false; document.body.style.overflow = "hidden";
+    box.textContent = "";
+    var top = document.createElement("div"); top.className = "top";
+    var h = document.createElement("h3"); h.id = "mineTitle"; h.textContent = t("My appointments");
+    var x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "×"; x.setAttribute("aria-label", t("Close")); x.onclick = closeMine;
+    top.appendChild(h); top.appendChild(x); box.appendChild(top);
+    var body = document.createElement("div"); box.appendChild(body);
+    var msg = function(text){ var p = document.createElement("p"); p.className = "empty"; p.textContent = t(text); body.textContent = ""; body.appendChild(p); };
+    var items = []; try{ items = JSON.parse(localStorage.getItem(bkKey(u.email)) || "[]"); }catch(e){}
+    if(!items.length) return msg("No appointments yet on this device. Book a visit and it will appear here.");
+    msg("Loading…");
+    var res = await callBooking({action:"mine", items:items.map(function(i){ return {id:i.id, token:i.token}; })});
+    if(!res.j || !res.j.ok) return msg("Could not load your appointments. Try again.");
+    var list = res.j.bookings || [], today = iso(new Date());
+    if(!list.length) return msg("No appointments yet on this device. Book a visit and it will appear here.");
+    var up = list.filter(function(b){ return b.date >= today && (b.status === "requested" || b.status === "confirmed"); })
+                 .sort(function(a, b){ return (a.date + a.time) < (b.date + b.time) ? -1 : 1; });
+    var past = list.filter(function(b){ return up.indexOf(b) === -1; }).sort(function(a, b){ return (a.date + a.time) < (b.date + b.time) ? 1 : -1; });
+    body.textContent = "";
+    [["Upcoming", up], ["Past", past]].forEach(function(g){
+      if(!g[1].length) return;
+      var h4 = document.createElement("h4"); h4.textContent = t(g[0]); body.appendChild(h4);
+      g[1].forEach(function(b){ body.appendChild(mineRow(b)); });
+    });
+  }
+  function closeMine(){ $("mine").hidden = true; document.body.style.overflow = ""; }
+  $("mine").addEventListener("click", function(e){ if(e.target === this) closeMine(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("mine").hidden) closeMine(); });
+
+  // ---- Reviews the clinic chose to show (admin > Reviews). Until there is one, the sample cards stay. ----
+  function loadFeaturedReviews(){
+    try{
+      fetch(SBU + "/rest/v1/rpc/featured_reviews", {method:"POST", headers:{apikey:SBK, Authorization:"Bearer " + SBK, "Content-Type":"application/json"}, body:"{}"})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(list){
+        if(!Array.isArray(list) || !list.length) return;
+        var grid = document.querySelector("#reviews .grid"); if(!grid) return;
+        grid.textContent = "";
+        list.slice(0, 6).forEach(function(r){
+          var fig = document.createElement("figure"); fig.setAttribute("data-keep", "");
+          var st = document.createElement("div"); st.className = "stars"; st.textContent = "★★★★★".slice(0, r.rating) + "☆☆☆☆☆".slice(0, 5 - r.rating); st.setAttribute("aria-label", r.rating + " / 5");
+          var bq = document.createElement("blockquote"); bq.textContent = r.comment; bq.setAttribute("dir", "auto");
+          var cap = document.createElement("figcaption"), av = document.createElement("span"), who = document.createElement("span"), nm = document.createElement("strong"), sv = document.createElement("span");
+          av.className = "avatar"; av.setAttribute("aria-hidden", "true"); av.textContent = (r.name || "?").charAt(0).toUpperCase();
+          who.className = "who"; nm.textContent = r.name; sv.textContent = r.service;
+          who.appendChild(nm); who.appendChild(sv); cap.appendChild(av); cap.appendChild(who);
+          fig.appendChild(st); fig.appendChild(bq); fig.appendChild(cap); grid.appendChild(fig);
+        });
+        var sample = document.querySelector("#reviews .sample"); if(sample) sample.hidden = true;
+      }).catch(function(){});
+    }catch(e){}
+  }
+  setTimeout(function(){ loadAvailability(); loadFeaturedReviews(); }, 0);
   function remember(){
     var r = myRequests().pop(); if(!r) return;
     if(!$("phone").value.trim() && r.phone) $("phone").value = r.phone;
@@ -1382,6 +1520,8 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     renderAdminLink();
     if(!u){ w.hidden = true; renderHist(); return; }
     w.hidden = false; w.textContent = t("Signed in as") + " " + u.email + " · ";
+    var mb = document.createElement("button"); mb.type = "button"; mb.className = "link"; mb.textContent = t("My appointments");
+    mb.onclick = openMine; w.appendChild(mb); w.appendChild(document.createTextNode(" · "));
     var b = document.createElement("button"); b.type = "button"; b.className = "link"; b.textContent = t("Log out");
     b.onclick = function(){ setUser(null); renderWho(); };
     w.appendChild(b);

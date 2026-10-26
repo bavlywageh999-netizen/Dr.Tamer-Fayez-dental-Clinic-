@@ -225,6 +225,26 @@ details div{font-size:.9rem;color:#456;margin-top:.25rem}
 @media (max-width:520px){.shell .side{flex-wrap:wrap;overflow:visible}.shell .nav svg{display:none}.shell .nav{padding:10px 13px;font-size:.9rem}.shell .side{gap:6px}.shell .kpis{grid-template-columns:1fr}.shell .brand span,.shell .brand .sep{display:none}}
 @media (max-width:650px){.shell .chat-layout{grid-template-columns:1fr}.shell .chat-list{max-height:32vh}.shell .chat-thread{min-height:390px}.shell .chat-thread-body{max-height:40vh}}
 @media (prefers-reduced-motion:reduce){.shell *{transition:none!important;animation:none!important}}
+
+/* ---- Calendar + Reviews tabs ---- */
+.shell .cal h2,.shell .rv h2{font-size:1.15rem;margin:0 0 .6rem;color:#0b4f55}
+.shell .cal .hint,.shell .rv .hint{font-size:.88rem;color:#456;margin:.2rem 0 .8rem}
+.shell .cal .days{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 1rem}
+.shell .cal .days label{display:flex;align-items:center;gap:.35rem;border:1px solid #b9cfcb;border-radius:999px;padding:.35rem .8rem;cursor:pointer;background:#fff}
+.shell .cal .days input{width:auto;margin:0}
+.shell .cal .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .8rem}
+.shell .cal .chipx{display:inline-flex;align-items:center;gap:.4rem;background:#e4f1ee;border-radius:999px;padding:.3rem .5rem .3rem .8rem;font-weight:600}
+.shell .cal .chipx button{width:1.5rem;height:1.5rem;padding:0;margin:0;border-radius:50%;background:#fff;color:#0b4f55;line-height:1}
+.shell .cal .line{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.4rem 0 .8rem}
+.shell .cal .line input,.shell .cal .line select{width:auto;margin:0;padding:.5rem .7rem}
+.shell .cal .line button,.shell .rv button.sm{width:auto;margin:0;padding:.5rem 1rem;border-radius:999px;background:#0f7470;color:#fff}
+.shell .cal button.ghost,.shell .rv button.ghost{background:#fff;color:#0b4f55;border:1px solid #9bbcb7}
+.shell .cal .msg,.shell .rv .msg{min-height:1.3em;font-size:.9rem;margin:.3rem 0 0}
+.shell .cal .msg.bad,.shell .rv .msg.bad{color:#b3261e}.shell .cal .msg.good,.shell .rv .msg.good{color:#146c43}
+.shell .cal td button,.shell .rv td button{width:auto;margin:0;padding:.3rem .8rem;border-radius:999px}
+.shell .tag{display:inline-block;font-size:.75rem;font-weight:700;border-radius:999px;padding:.1rem .55rem;background:#e4f1ee;color:#0b4f55;white-space:nowrap}
+.shell .tag.red{background:#f8d9d5;color:#7f1d1d}.shell .tag.green{background:#d6f0dc;color:#14532d}.shell .tag.amber{background:#fff1c7;color:#6b4f00}
+.shell .rv tr.low td{background:#fff6f4}
 </style></head><body>
 <div class="stage" id="stage"><div class="sq"><div class="bg"></div><div class="cardbox">
 <form class="glass" id="gate" novalidate>
@@ -272,6 +292,8 @@ details div{font-size:.9rem;color:#456;margin-top:.25rem}
     <button class="nav on" data-view="analytics" type="button" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg><span>Analytics</span></button>
     <button class="nav" data-view="appointments" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span>Appointments</span><em id="navBk" class="badge" hidden></em></button>
     <button class="nav" data-view="messages" type="button"><span>▤</span><span>Messages</span></button>
+    <button class="nav" data-view="calendar" type="button"><span>▦</span><span>Calendar</span></button>
+    <button class="nav" data-view="reviews" type="button"><span>★</span><span>Reviews</span></button>
   <button class="nav" data-view="patients" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.6 3-5.2 6-5.2s5.5 1.6 6 5.2"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.6c2.6.1 4.1 1.6 4.5 4.4"/></svg><span>Patients</span></button>
     <span class="grow"></span>
     <button class="nav" id="lo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/></svg><span>Log out</span></button>
@@ -301,6 +323,42 @@ details div{font-size:.9rem;color:#456;margin-top:.25rem}
 <p class="warn" id="bkMsg" role="status" hidden></p>
 <table><thead><tr><th>Ref</th><th>Patient</th><th>Contact</th><th>Treatment</th><th>Requested for</th><th>Status</th><th>Notifications</th></tr></thead><tbody id="bkRows"></tbody></table>
 <small id="bkUpd" style="color:#5a7378"></small></div>
+    </section>
+    <section id="v-calendar" class="view cal" hidden>
+      <div class="vhead"><h1 class="pt">Calendar</h1><button id="calRefresh" type="button" class="pill">Refresh</button></div>
+      <p id="calStatus" class="msg" role="status"></p>
+      <div class="panel" style="padding:18px">
+        <h2>Opening days and times</h2>
+        <p class="hint">Patients can only book the days and times set here. Changes apply to the website straight away.</p>
+        <div class="days" id="calDays"></div>
+        <strong>Time slots</strong>
+        <div class="chips" id="calSlots"></div>
+        <div class="line"><input id="calNewTime" type="text" placeholder="e.g. 6:30 pm" aria-label="New time" maxlength="8"><button type="button" id="calAddTime">Add time</button></div>
+        <div class="line"><label for="calCap">Patients per time slot</label><input id="calCap" type="number" min="1" max="20" style="width:5rem">
+          <label for="calAhead">Book up to</label><input id="calAhead" type="number" min="1" max="366" style="width:5.5rem"><span>days ahead</span></div>
+        <div class="line"><button type="button" id="calSave">Save opening hours</button><span id="calSaveMsg" class="msg"></span></div>
+      </div>
+      <div class="panel" style="padding:18px">
+        <h2>Days off and holidays</h2>
+        <p class="hint">Patients cannot book these days. Existing bookings are not cancelled: contact those patients yourself.</p>
+        <div class="line"><input id="calOffDate" type="date" aria-label="Day off"><input id="calOffReason" type="text" placeholder="Reason (optional), e.g. Holiday" maxlength="120" style="min-width:14rem"><button type="button" id="calOffAdd">Add day off</button></div>
+        <p id="calOffMsg" class="msg"></p>
+        <table><thead><tr><th>Date</th><th>Reason</th><th></th></tr></thead><tbody id="calOffRows"></tbody></table>
+      </div>
+      <div class="panel" style="padding:18px">
+        <h2>Day view</h2>
+        <p class="hint">See who is booked at each time. Block a time (for example a meeting) so patients cannot book it.</p>
+        <div class="line"><button type="button" class="ghost" id="calPrev">‹</button><input id="calDay" type="date" aria-label="Day"><button type="button" class="ghost" id="calNext">›</button><span id="calDayInfo"></span></div>
+        <p id="calDayMsg" class="msg"></p>
+        <table><thead><tr><th>Time</th><th>Status</th><th>Patient</th><th></th></tr></thead><tbody id="calDayRows"></tbody></table>
+      </div>
+    </section>
+    <section id="v-reviews" class="view rv" hidden>
+      <div class="vhead"><h1 class="pt">Reviews</h1><span><button id="rvSend" type="button" class="pill">Send due requests now</button> <button id="rvRefresh" type="button" class="pill">Refresh</button></span></div>
+      <p class="hint">When a booking is marked <b>Completed</b> in Appointments, the patient gets a message the next day at 6:00 pm asking for a rating. Low ratings stay private so the clinic can follow up. Choose which written reviews appear on the website.</p>
+      <p id="rvMsg" class="msg" role="status"></p>
+      <div class="cards" id="rvCards"></div>
+      <div class="panel" style="padding:18px"><table><thead><tr><th>Patient</th><th>Visit</th><th>Request</th><th>Rating</th><th>Feedback</th><th>Website</th><th></th></tr></thead><tbody id="rvRows"></tbody></table></div>
     </section>
     <section id="v-messages" class="view" hidden>
       <div class="vhead"><h1 class="pt">Live chat messages</h1><button id="chatStaffRefresh" type="button" class="pill">Refresh</button></div>
@@ -505,7 +563,7 @@ async function setStatus(b,sel){
   try{
     var r=await authed("/rest/v1/bookings?id=eq."+encodeURIComponent(b.id),{method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify({status:sel.value,status_changed_at:new Date().toISOString()})});
     var j=await jsonOf(r);
-    if(!r.ok||!Array.isArray(j)||!j.length){sel.value=prev;bkMsg("The status was NOT changed (status "+r.status+"). Your account may not be allowed to update bookings.")}
+    if(!r.ok||!Array.isArray(j)||!j.length){sel.value=prev;var why=apiMsg(j),nice={slot_taken:"That time is already booked by another patient.",closed_day:"The clinic is closed on that day.",slot_blocked:"That time is blocked in the Calendar.",bad_time:"That time is not in the Calendar's time list.",too_far:"That date is further ahead than patients are allowed to book."}[why];bkMsg("The status was NOT changed (status "+r.status+"). "+(nice||"Your account may not be allowed to update bookings."))}
     else{b.status=j[0].status;bkMsg("")}
   }catch(e){sel.value=prev;bkMsg(e&&e.code==="expired"?"Your session expired. Log in again.":"The status was NOT changed (no connection).")}
   finally{sel.disabled=false}
@@ -665,13 +723,182 @@ function drawPages(el,pages){
   });
 }
 function showView(v){
-  ["analytics","appointments","messages","patients"].forEach(function(k){$("v-"+k).hidden=k!==v;var b=document.querySelector('.nav[data-view="'+k+'"]');b.classList.toggle("on",k===v);if(k===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+  ["analytics","appointments","messages","calendar","reviews","patients"].forEach(function(k){$("v-"+k).hidden=k!==v;var b=document.querySelector('.nav[data-view="'+k+'"]');b.classList.toggle("on",k===v);if(k===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   $("anTools").hidden=v!=="analytics";
   if(v==="analytics"){if(AN.last&&AN.cache[AN.range+(AN.range==="custom"?AN.cf+AN.ct:"")])loadAnalytics(false);else loadAnalytics(false)}
   if(v==="appointments")$("navBk").hidden=true;
   if(v==="messages")startChatStaff();
+  if(v==="calendar")calStart();
+  if(v==="reviews")rvLoad();
 }
 Array.prototype.forEach.call(document.querySelectorAll(".nav[data-view]"),function(b){b.onclick=function(){showView(b.getAttribute("data-view"))}});
+
+// ================= Calendar (opening hours, days off, day view) =================
+var CAL={settings:null,day:null},DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function calMsg(id,t,kind){var m=$(id);m.textContent=t||"";m.className="msg"+(kind?" "+kind:"")}
+function pad2(n){return String(n).padStart(2,"0")}
+function isoDay(d){return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())}
+function timeMin(t){var m=/^(\d{1,2}):(\d{2}) (am|pm)$/i.exec(t||"");if(!m)return 0;return (+m[1]%12+(m[3].toLowerCase()==="pm"?12:0))*60+ +m[2]}
+function fmtDay(v){var p=v.split("-");return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+async function calJson(path,opts){var r=await authed(path,opts),j=await jsonOf(r);return {r:r,j:j}}
+function calErr(x){
+  if(x.r.status===404||/does not exist|schema cache|PGRST20/.test(apiMsg(x.j)))return "The calendar tables are missing. Run supabase_features.sql in the Supabase SQL Editor first.";
+  return "Could not complete this (status "+x.r.status+")"+(apiMsg(x.j)?": "+apiMsg(x.j):"")+"."
+}
+async function calStart(){
+  if(!CAL.day)CAL.day=isoDay(new Date());
+  $("calDay").value=CAL.day;
+  calMsg("calStatus","Loading…");
+  try{
+    var x=await calJson("/rest/v1/clinic_settings?select=open_days,slot_times,capacity,max_days_ahead&id=eq.1");
+    if(!x.r.ok||!Array.isArray(x.j)||!x.j.length){calMsg("calStatus",calErr(x),"bad");return}
+    CAL.settings=x.j[0];calMsg("calStatus","");
+    calRenderSettings();await calLoadOff();await calLoadDay();
+  }catch(e){calMsg("calStatus",e&&e.code==="expired"?"Your session expired. Log in again.":"No connection. Try again.","bad")}
+}
+function calRenderSettings(){
+  var s=CAL.settings,d=$("calDays");d.textContent="";
+  DOW.forEach(function(n,i){var l=h("label",null,d),c=h("input",null,l);c.type="checkbox";c.value=i;c.checked=s.open_days.indexOf(i)>-1;c.onchange=function(){calCollect()};h("span",n,l)});
+  calRenderSlots();$("calCap").value=s.capacity;$("calAhead").value=s.max_days_ahead;
+}
+function calCollect(){
+  CAL.settings.open_days=[].filter.call($("calDays").querySelectorAll("input"),function(c){return c.checked}).map(function(c){return +c.value});
+}
+function calRenderSlots(){
+  var el=$("calSlots");el.textContent="";
+  CAL.settings.slot_times.slice().sort(function(a,b){return timeMin(a)-timeMin(b)}).forEach(function(t){
+    var c=h("span",null,el,"chipx");h("span",t,c);var b=h("button","×",c);b.type="button";b.setAttribute("aria-label","Remove "+t);
+    b.onclick=function(){CAL.settings.slot_times=CAL.settings.slot_times.filter(function(x){return x!==t});calRenderSlots()};
+  });
+}
+$("calAddTime").onclick=function(){
+  var v=$("calNewTime").value.trim().toLowerCase().replace(/\s+/g," ").replace(/^(\d{1,2}:\d{2})(am|pm)$/,"$1 $2");
+  if(!/^(1[0-2]|[1-9]):[0-5]\d (am|pm)$/.test(v)){calMsg("calSaveMsg","Write the time like 6:30 pm.","bad");return}
+  if(CAL.settings.slot_times.indexOf(v)>-1){calMsg("calSaveMsg","That time is already in the list.","bad");return}
+  CAL.settings.slot_times.push(v);$("calNewTime").value="";calMsg("calSaveMsg","");calRenderSlots();
+};
+$("calSave").onclick=async function(){
+  calCollect();var s=CAL.settings,cap=+$("calCap").value,ahead=+$("calAhead").value;
+  if(!s.open_days.length)return calMsg("calSaveMsg","Choose at least one opening day.","bad");
+  if(!s.slot_times.length)return calMsg("calSaveMsg","Add at least one time slot.","bad");
+  if(!(cap>=1&&cap<=20))return calMsg("calSaveMsg","Patients per time slot must be 1 to 20.","bad");
+  if(!(ahead>=1&&ahead<=366))return calMsg("calSaveMsg","Days ahead must be 1 to 366.","bad");
+  var b=this;b.disabled=true;calMsg("calSaveMsg","Saving…");
+  try{
+    var x=await calJson("/rest/v1/clinic_settings?id=eq.1",{method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=representation"},
+      body:JSON.stringify({open_days:s.open_days,slot_times:s.slot_times.slice().sort(function(a,c){return timeMin(a)-timeMin(c)}),capacity:cap,max_days_ahead:ahead,updated_at:new Date().toISOString()})});
+    if(!x.r.ok||!Array.isArray(x.j)||!x.j.length)calMsg("calSaveMsg","Not saved. "+calErr(x),"bad");
+    else{CAL.settings=x.j[0];calRenderSettings();calMsg("calSaveMsg","Saved. The website uses these hours now.","good");calLoadDay()}
+  }catch(e){calMsg("calSaveMsg","Not saved (no connection).","bad")}finally{b.disabled=false}
+};
+async function calLoadOff(){
+  var x=await calJson("/rest/v1/clinic_closures?select=closed_date,reason&closed_date=gte."+isoDay(new Date())+"&order=closed_date.asc&limit=200"),tb=$("calOffRows");tb.textContent="";
+  if(!x.r.ok||!Array.isArray(x.j)){calMsg("calOffMsg",calErr(x),"bad");return}
+  if(!x.j.length){var tr=h("tr",null,tb),td=h("td","No days off set.",tr);td.colSpan=3;return}
+  x.j.forEach(function(c){
+    var tr=h("tr",null,tb);h("td",fmtDay(c.closed_date),tr);h("td",c.reason||"",tr);var td=h("td",null,tr),b=h("button","Remove",td,"ghost");b.type="button";
+    b.onclick=async function(){b.disabled=true;var y=await calJson("/rest/v1/clinic_closures?closed_date=eq."+c.closed_date,{method:"DELETE"});
+      if(!y.r.ok){calMsg("calOffMsg",calErr(y),"bad");b.disabled=false}else{calMsg("calOffMsg","");await calLoadOff();await calLoadDay()}};
+  });
+}
+$("calOffAdd").onclick=async function(){
+  var d=$("calOffDate").value;if(!d)return calMsg("calOffMsg","Choose the date first.","bad");
+  var b=this;b.disabled=true;calMsg("calOffMsg","Saving…");
+  try{
+    var x=await calJson("/rest/v1/clinic_closures",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"return=minimal,resolution=merge-duplicates"},body:JSON.stringify({closed_date:d,reason:$("calOffReason").value.trim()||null})});
+    if(!x.r.ok){calMsg("calOffMsg",calErr(x),"bad");return}
+    var y=await calJson("/rest/v1/bookings?select=id&req_date=eq."+d+"&status=in.(requested,confirmed)"),n=Array.isArray(y.j)?y.j.length:0;
+    calMsg("calOffMsg",n?"Day off added. "+n+" booking"+(n>1?"s":"")+" already on this day: contact the patient"+(n>1?"s":"")+" (see Day view).":"Day off added.",n?"bad":"good");
+    $("calOffDate").value="";$("calOffReason").value="";CAL.day=d;$("calDay").value=d;await calLoadOff();await calLoadDay();
+  }catch(e){calMsg("calOffMsg","Not saved (no connection).","bad")}finally{b.disabled=false}
+};
+async function calLoadDay(){
+  var d=$("calDay").value||CAL.day;CAL.day=d;var tb=$("calDayRows");tb.textContent="";calMsg("calDayMsg","");$("calDayInfo").textContent=d?fmtDay(d):"";
+  if(!d||!CAL.settings)return;
+  var q1=calJson("/rest/v1/bookings?select=id,ref,name,phone,service,req_time,status&req_date=eq."+d+"&status=in.(requested,confirmed)&order=created_at.asc"),
+      q2=calJson("/rest/v1/slot_blocks?select=block_time,reason&block_date=eq."+d),
+      q3=calJson("/rest/v1/clinic_closures?select=reason&closed_date=eq."+d),
+      all=await Promise.all([q1,q2,q3]),bk=all[0],bl=all[1],cl=all[2];
+  if(!bk.r.ok||!bl.r.ok||!cl.r.ok||!Array.isArray(bk.j)){calMsg("calDayMsg",calErr(bk.r.ok?(bl.r.ok?cl:bl):bk),"bad");return}
+  var dow=new Date(d+"T00:00:00").getDay(),offDay=cl.j.length>0||CAL.settings.open_days.indexOf(dow)===-1;
+  if(offDay)calMsg("calDayMsg",cl.j.length?"Closed: "+(cl.j[0].reason||"day off")+".":"Closed: "+DOW[dow]+" is not an opening day.","bad");
+  var cap=CAL.settings.capacity,times=CAL.settings.slot_times.slice();
+  bk.j.forEach(function(b){var t=String(b.req_time).toLowerCase();if(times.indexOf(t)===-1)times.push(t)});
+  times.sort(function(a,b){return timeMin(a)-timeMin(b)});
+  times.forEach(function(t){
+    var tr=h("tr",null,tb),people=bk.j.filter(function(b){return String(b.req_time).toLowerCase()===t}),blk=bl.j.filter(function(x){return x.block_time===t})[0];
+    h("td",t,tr).style.fontWeight="700";
+    var st=h("td",null,tr);
+    if(people.length)h("span",people.length>=cap?"Booked":"Booked "+people.length+"/"+cap,st,"tag "+(people.length>=cap?"red":"amber"));
+    else if(blk)h("span","Blocked",st,"tag red");
+    else h("span",offDay?"Closed":"Free",st,"tag "+(offDay?"":"green"));
+    var pc=h("td",null,tr);
+    people.forEach(function(b){var l=h("div",b.name+" · "+b.phone+" · "+b.service+" · "+b.ref+" · "+b.status,pc)});
+    if(blk&&blk.reason)h("div",blk.reason,pc);
+    var ac=h("td",null,tr);
+    if(!people.length&&!offDay){
+      var btn=h("button",blk?"Unblock":"Block",ac,"ghost");btn.type="button";
+      btn.onclick=async function(){btn.disabled=true;
+        var y=blk?await calJson("/rest/v1/slot_blocks?block_date=eq."+d+"&block_time=eq."+encodeURIComponent(t),{method:"DELETE"})
+                 :await calJson("/rest/v1/slot_blocks",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({block_date:d,block_time:t})});
+        if(!y.r.ok){calMsg("calDayMsg",calErr(y),"bad");btn.disabled=false}else calLoadDay()};
+    }
+  });
+}
+$("calDay").onchange=function(){CAL.day=this.value;calLoadDay()};
+$("calPrev").onclick=function(){var p=($("calDay").value||isoDay(new Date())).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]-1);$("calDay").value=isoDay(d);calLoadDay()};
+$("calNext").onclick=function(){var p=($("calDay").value||isoDay(new Date())).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]+1);$("calDay").value=isoDay(d);calLoadDay()};
+$("calRefresh").onclick=calStart;
+
+// ================= Reviews =================
+var RV_SELECT="id,created_at,send_after,email_status,email_error,whatsapp_status,whatsapp_error,rating,comment,submitted_at,google_clicked_at,show_on_site,bookings(name,service,req_date,email,phone)";
+function rvMsg(t,kind){var m=$("rvMsg");m.textContent=t||"";m.className="msg"+(kind?" "+kind:"")}
+function rvChan(label,st,err){var t={accepted:"sent",pending:"waiting",sending:"sending",failed:"failed",not_configured:"not set up",skipped:"skipped"}[st]||st;return label+": "+t+(st==="failed"&&err?" ("+err+")":"")}
+async function rvLoad(){
+  rvMsg("Loading…");
+  try{
+    var x=await calJson("/rest/v1/review_requests?select="+RV_SELECT+"&order=created_at.desc&limit=200");
+    if(!x.r.ok||!Array.isArray(x.j)){rvMsg(calErr(x).replace("calendar tables","review tables"),"bad");return}
+    rvMsg("");rvRender(x.j);
+  }catch(e){rvMsg(e&&e.code==="expired"?"Your session expired. Log in again.":"No connection. Try again.","bad")}
+}
+function rvRender(list){
+  var rated=list.filter(function(r){return r.rating}),avg=rated.length?rated.reduce(function(a,r){return a+r.rating},0)/rated.length:0;
+  var waiting=list.filter(function(r){return r.email_status==="pending"||r.whatsapp_status==="pending"}).length,cards=$("rvCards");cards.textContent="";
+  [[rated.length?avg.toFixed(1)+" ★":"–","Average rating"],[rated.length+" / "+list.length,"Patients who rated"],[String(waiting),"Requests waiting to send"]].forEach(function(c){var d=h("div",null,cards,"card");h("b",c[0],d);h("span",c[1],d)});
+  var tb=$("rvRows");tb.textContent="";
+  if(!list.length){var tr=h("tr",null,tb),td=h("td","No review requests yet. They appear after a booking is marked Completed.",tr);td.colSpan=7;return}
+  list.forEach(function(r){
+    var b=r.bookings||{},tr=h("tr",null,tb);if(r.rating&&r.rating<=3)tr.className="low";
+    var p=h("td",null,tr);h("strong",b.name||"",p);h("div",(b.phone||"")+(b.email?" · "+b.email:""),p);
+    h("td",(b.service||"")+(b.req_date?" · "+b.req_date:""),tr);
+    var q=h("td",null,tr);h("div",rvChan("Email",r.email_status,r.email_error),q);h("div",rvChan("WhatsApp",r.whatsapp_status,r.whatsapp_error),q);
+    if((r.email_status==="pending"||r.whatsapp_status==="pending")&&new Date(r.send_after)>new Date())h("div","Scheduled: "+new Date(r.send_after).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}),q);
+    var rt=h("td",null,tr);
+    if(r.rating){h("span","★".repeat(r.rating)+"☆".repeat(5-r.rating),rt);if(r.rating<=3)h("div","Needs follow-up",rt,"tag red");if(r.google_clicked_at)h("div","Opened Google",rt,"tag green")}else h("span","Not rated yet",rt);
+    h("td",r.comment||"",tr);
+    var w=h("td",null,tr);
+    var on=r.show_on_site==="featured",fb=h("button",on?"Hide from website":"Show on website",w,on?"ghost":"");fb.type="button";
+    if(!on&&(!r.comment||!r.rating)){fb.disabled=true;fb.title="Only reviews with a written comment can be shown."}
+    fb.onclick=async function(){fb.disabled=true;var y=await calJson("/rest/v1/review_requests?id=eq."+r.id,{method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({show_on_site:on?"hidden":"featured"})});
+      if(!y.r.ok){rvMsg(calErr(y),"bad");fb.disabled=false}else rvLoad()};
+    var a=h("td",null,tr);
+    if(!r.rating){var rs=h("button","Send again",a,"ghost");rs.type="button";
+      rs.onclick=async function(){rs.disabled=true;var y=await calJson("/rest/v1/review_requests?id=eq."+r.id,{method:"PATCH",headers:{"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({email_status:"pending",whatsapp_status:"pending",send_after:new Date().toISOString()})});
+        if(!y.r.ok){rvMsg(calErr(y),"bad");rs.disabled=false}else{rvMsg("Queued. Press “Send due requests now” to send it immediately.","good");rvLoad()}}}
+  });
+}
+$("rvRefresh").onclick=rvLoad;
+$("rvSend").onclick=async function(){
+  var b=this;b.disabled=true;rvMsg("Sending…");
+  try{
+    var r=await authed("/functions/v1/review-flow",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"send_due"})}),j=await jsonOf(r);
+    if(r.status===503&&j&&j.code==="site_url_missing")rvMsg("The SITE_URL secret is missing in Supabase (Edge Functions > Secrets). See SETUP_NEW_FEATURES.md.","bad");
+    else if(r.status===404||(!j&&!r.ok))rvMsg("The review-flow function is not deployed yet. See SETUP_NEW_FEATURES.md.","bad");
+    else if(!r.ok||!j||!j.ok)rvMsg("Could not send (status "+r.status+")"+(j&&j.code?": "+j.code:"")+".","bad");
+    else{var res=j.results||{},n=Object.keys(res).map(function(k){return res[k]+" "+k.replace("_"," ")}).join(", ");rvMsg(j.checked?"Done: "+(n||"nothing to send")+".":"Nothing is due yet.","good");rvLoad()}
+  }catch(e){rvMsg("Could not reach the server.","bad")}finally{b.disabled=false}
+};
 var CHATS=[],CHAT_ID=null,CHAT_AFTER=0,CHAT_TIMER=null,CHAT_BUSY=false;
 function chatErrorMessage(j){return j&&(j.message||j.code||j.error_description)||"Unknown server error"}
 function chatFailure(error){
