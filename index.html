@@ -79,7 +79,6 @@ input:not([type="date"]),textarea{-webkit-appearance:none;appearance:none}
 input,select,textarea{box-sizing:border-box;min-height:3rem;margin:0;font-size:16px}
 select{-webkit-appearance:none;appearance:none;height:2.2rem;min-height:0;padding-block:0;padding-inline:.7rem 2rem;border:1px solid var(--line);border-radius:6px;color:#111;text-overflow:ellipsis;cursor:pointer;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'%3E%3Cpath d='M5 0l4 5H1zM5 14L1 9h8z' fill='%23222'/%3E%3C/svg%3E") no-repeat right .6rem center/10px 14px,linear-gradient(#fdfdfd,#d3d3d3)}
-html[dir="rtl"] select{background-position:left .85rem center}
 input[type="date"]{display:block;min-width:0;text-align:start;line-height:1.4;background-color:#fff}
 input[type="date"]::-webkit-date-and-time-value{text-align:start;min-height:1.4em;margin:0}
 input[type="date"]::-webkit-calendar-picker-indicator{opacity:.6}
@@ -195,7 +194,6 @@ section{padding:5rem 0}
 .checks svg{color:var(--sun);flex:none}
 .plan{display:inline-flex;align-items:center;gap:.6rem;color:var(--sun);font-weight:600;text-decoration:none;transition:gap .2s}
 .plan:hover{gap:1rem}
-html[dir="rtl"] .plan svg{transform:scaleX(-1)}
 @media (max-width:900px){.doctor .wrap{grid-template-columns:1fr;gap:3rem}.doctor{padding:4rem 0}}
 
 /* Floating WhatsApp button */
@@ -236,7 +234,6 @@ blockquote{margin:0;font-size:1.05rem}
 .disc{display:none}
 .person{position:absolute;left:0;top:calc(var(--d)*.1441);width:calc(var(--d)*.7231)}
 .person img{display:block;width:110.5%;max-width:none;height:auto}
-html[dir="rtl"] .hero-art{right:auto;left:calc(var(--d)*-.2774 - 8px);transform:scaleX(-1)}
 /* Tablets and phones: keep the desktop layout (text on one side, doctor in the circle on the other) */
 @media (max-width:900px){
   .hero-art{top:calc(50% - var(--d)/2)}
@@ -306,13 +303,13 @@ html[lang="ar"] body,html[lang="ar"] input,html[lang="ar"] select,html[lang="ar"
 html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3,html[lang="ar"] .brand{font-family:"Cairo","Segoe UI",Tahoma,sans-serif;letter-spacing:0;line-height:1.3}
 html[lang="ar"] h1{line-height:1.25}
 html[lang="ar"] body{line-height:1.8}
-html[dir="rtl"] html[dir="rtl"] .svc .tag{text-align:left}
-html[dir="rtl"] .hours li.today span:first-child::after{content:" (اليوم)"}
-html[dir="rtl"] a[data-tel]:not(.btn){direction:ltr;unicode-bidi:isolate;display:inline-block}
-html[dir="rtl"] .maplink{left:auto;right:1rem}
-html[dir="rtl"] .btn-dir svg,html[dir="rtl"] .btn svg{flex:none}
-html[dir="rtl"] select{background-position:left .8rem center}
-@media (max-width:700px){html[dir="rtl"] .svc .tag{text-align:right}}
+/* Arabic page = English page: same layout, same left alignment, same order of rows and icons.
+   Pure text blocks only get unicode-bidi:plaintext so each Arabic sentence is still shaped right-to-left with its punctuation on the correct side. */
+html[lang="ar"] :where(p,h1,h2,h3,h4,h5,h6,blockquote,summary,.note,.eyebrow,.lead,.who>*,.hours li>span){unicode-bidi:plaintext}
+html[lang="ar"],html[lang="ar"] body{text-align:left}   /* inherited: Arabic text sits on the left like English; blocks that centre or right-align themselves keep doing so */
+html[lang="ar"] .hours li.today span:first-child::after{content:" (اليوم)"}
+html[lang="ar"] a[data-tel]:not(.btn){direction:ltr;unicode-bidi:isolate;display:inline-block}
+html[lang="ar"] .btn-dir svg,html[lang="ar"] .btn svg{flex:none}
 
 /* Booking: motion */
 .book-intro .ico{width:96px;height:96px;border-radius:22px;background:#fff;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 8px 22px rgba(15,61,74,.12)}
@@ -375,7 +372,6 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem
 .a-tabs button[aria-selected="true"]{color:var(--sea);border-color:var(--sun)}
 .af{position:relative;margin-bottom:.9rem}
 .af input{border:0;border-bottom:2px solid var(--sea-2);border-radius:0;background:transparent;padding:.5rem 2.2rem .5rem 0}
-html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
 .af input:focus{outline:0;border-color:var(--sun);box-shadow:0 2px 0 var(--sun)}
 .a-eye{position:absolute;inset-inline-end:0;bottom:.35rem;border:0;background:none;color:var(--muted);cursor:pointer;padding:.2rem}
 .a-btn{width:100%;border:0;border-radius:999px;padding:.8rem;font:600 1rem var(--body);color:#fff;cursor:pointer;background:linear-gradient(90deg,var(--sea-2),#3cc4c4);box-shadow:0 8px 18px rgba(26,102,117,.35);margin-top:.3rem}
@@ -423,7 +419,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
 .mascot svg{width:100%;height:100%;display:block}
 .mascot .bob{animation:bob 3s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.mascot .eyes{transform:translate(var(--lx,0px),var(--ly,0px));transition:transform .25s ease}
+.mascot .eyes{transform:translate(var(--lx,0px),var(--ly,0px));transition:transform .12s ease-out}
 .mascot .eye{fill:#10242c;transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
 .mascot .blush{fill:#f4a6a0;opacity:.45}
@@ -573,7 +569,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     <div class="gbar">
       <p class="grate"><strong>4.9</strong> <span class="stars" aria-label="4.9 out of 5 stars"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span> <span>from 84 Google reviews</span></p>
       <div class="gbtns">
-        <a class="btn btn-gr" href="https://search.google.com/local/reviews?placeid=ChIJC0f_fgzF9RQRV-bEd-FPUq0" target="_blank" rel="noopener">View all Google reviews</a>
+        <a class="btn btn-gr" href="https://www.google.com/maps/place/Tamer+Fayez+dental+clinic/@31.2222798,29.9420034,17z/data=!4m8!3m7!1s0x14f5c50c7eff470b:0xad524fe177c4e657!8m2!3d31.2222798!4d29.9420034!9m1!1b1!16s%2Fg%2F1td1yltg!5m1!1e1?entry=ttu&amp;g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">View all Google reviews</a>
         <a class="btn btn-gw" href="https://search.google.com/local/writereview?placeid=ChIJC0f_fgzF9RQRV-bEd-FPUq0" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Write your review</a>
       </div>
     </div>
@@ -663,6 +659,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
         <div id="cfBox"></div>
         <button class="btn" type="button" id="submitBooking" data-dyn>Submit</button>
         <a class="link" id="wa" href="#" target="_blank" rel="noopener" hidden>Send a WhatsApp message to the clinic</a>
+        <button class="btn" type="button" id="backHome" hidden>Back to home</button>
         <button class="link" type="button" id="again">Change details</button>
       </div>
     </div>
@@ -785,6 +782,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   var $ = function(id){return document.getElementById(id)};
   // ---- Language (English / Arabic) ----
   var AR = {"Dr. Tamer Fayez": "د. تامر فايز", "Dental Clinic, Alexandria": "عيادة أسنان، الإسكندرية", "Services": "الخدمات", "Your dentist": "الطبيب", "Reviews": "آراء المرضى", "Visit us": "زورونا", "Book a visit": "احجز موعدك", "Dental care in Alexandria that feels unhurried.": "رعاية أسنان في الإسكندرية بلا استعجال.", "From a routine check-up to implants and braces, Dr. Tamer Fayez explains every step before it starts and treats you at your pace.": "من الكشف الدوري إلى الزراعة والتقويم، يشرح لك د. تامر فايز كل خطوة قبل أن تبدأ، ويعالجك بالوتيرة التي تناسبك.", "Book an appointment": "احجز موعدًا", "See treatments": "شاهد العلاجات", "Trusted & Certified": "موثوق ومعتمد", "Latest Technology": "أحدث التقنيات", "Pain-Free Experience": "تجربة بلا ألم", "Treatments, in plain terms": "علاجاتنا بكل وضوح", "Every plan starts with an examination and a clear explanation of your options and costs.": "كل خطة علاج تبدأ بفحص وشرح واضح للخيارات والتكلفة.", "Check-up and cleaning": "الكشف والتنظيف", "Examination, scale and polish, and advice to keep gums and teeth healthy between visits.": "فحص شامل وإزالة الجير والتلميع، مع نصائح للحفاظ على صحة اللثة والأسنان بين الزيارات.", "Every 6 months": "كل 6 أشهر", "Teeth whitening": "تبييض الأسنان", "Safe in-clinic whitening for a brighter shade, with guidance on keeping the result.": "تبييض آمن داخل العيادة للحصول على لون أفتح، مع إرشادات للحفاظ على النتيجة.", "1 visit": "زيارة واحدة", "Fillings and repairs": "الحشوات والترميم", "Tooth-coloured fillings that match your teeth, plus repair of chips and cracks.": "حشوات بلون الأسنان الطبيعي، وإصلاح الكسور والتشققات البسيطة.", "Same day": "في نفس اليوم", "Crowns, bridges and dentures": "التيجان والجسور وطقم الأسنان", "Fixed and removable restorations made to match the colour and shape of your own teeth.": "تركيبات ثابتة ومتحركة تُصنع لتطابق لون أسنانك وشكلها.", "Made to fit": "بمقاس دقيق", "Root canal treatment": "علاج قناة الجذر", "Relieves infection and pain while keeping your natural tooth.": "يزيل العدوى والألم مع الحفاظ على سنّك الطبيعية.", "1 to 3 visits": "من 1 إلى 3 زيارات", "Braces and aligners": "التقويم والمقوّمات الشفافة", "Straightening for teenagers and adults, with regular reviews to track progress.": "تقويم للمراهقين والبالغين، مع متابعة دورية لتقدّم العلاج.", "Months": "أشهر", "Dental implants": "زراعة الأسنان", "A fixed replacement for missing teeth that looks and works like your own.": "بديل ثابت للأسنان المفقودة يبدو ويعمل مثل أسنانك الطبيعية.", "Planned in stages": "على مراحل", "Gum treatment and surgery": "علاج اللثة وجراحتها", "Treatment for bleeding, swollen or receding gums, including minor gum surgery.": "علاج نزيف اللثة وتورمها وانحسارها، بما في ذلك جراحات اللثة البسيطة.", "As needed": "حسب الحاجة", "Veneers and smile design": "الفينير وتصميم الابتسامة", "E-max and zirconia veneers and crowns that reshape your smile and look natural.": "فينير وتيجان إيماكس وزركون تعيد تشكيل ابتسامتك بمظهر طبيعي.", "2 visits": "زيارتان", "Meet Dr. Tamer Fayez": "تعرّف على د. تامر فايز", "Dr. Fayez is a consultant in cosmetic and fixed prosthodontics and dental implants. He is known in Alexandria for smile design and for restoring teeth so they look and feel natural.": "د. فايز استشاري التركيبات التجميلية والثابتة وزراعة الأسنان. يُعرف في الإسكندرية بتصميم الابتسامة وترميم الأسنان لتبدو وتبدو طبيعية.", "He takes time to understand what worries you, shows you what he sees, and only then recommends treatment.": "يخصّص وقتًا ليفهم ما يقلقك، ويُريك ما يراه، ثم يقترح العلاج المناسب.", "Consultant in cosmetic and fixed prosthodontics and implants": "استشاري التركيبات التجميلية والثابتة والزراعة", "Smile design with E-max veneers and zirconia": "تصميم الابتسامة بفينير إيماكس والزركون", "Trusted by patients: 4.9 stars from 84 Google reviews": "موضع ثقة المرضى: 4.9 نجوم من 84 تقييمًا على Google", "What patients say": "آراء المرضى", "Honest words from people who trusted us with their smiles.": "كلمات صادقة ممن وثقوا بنا في ابتسامتهم.", "from 84 Google reviews": "من 84 تقييمًا على Google", "View all Google reviews": "عرض كل التقييمات على Google", "Write your review": "اكتب تقييمك", "These are sample reviews and names. Replace them with real patient reviews (with permission) before publishing.": "هذه تقييمات وأسماء تجريبية. استبدلها بتقييمات حقيقية من المرضى (بموافقتهم) قبل النشر.", "Book your appointment": "احجز موعدك", "Call or message us on WhatsApp, or send a request with the form and we will confirm your visit.": "اتصل بنا أو راسلنا على واتساب، أو أرسل طلبك من النموذج وسنؤكد لك الموعد.", "Call 015 5627 7801": "اتصل ⁦015 5627 7801⁩", "Chat on WhatsApp": "تحدّث معنا على واتساب", "Choose a time and we will confirm it by phone or WhatsApp.": "اختر الوقت وسنؤكده معك بالهاتف أو واتساب.", "Full name": "الاسم بالكامل", "Mobile number": "رقم الموبايل", "Treatment": "العلاج", "Choose a treatment": "اختر العلاج", "Toothache or emergency": "ألم أسنان أو حالة طارئة", "Preferred date": "التاريخ المفضل", "Preferred time": "الوقت المفضل", "Anything we should know? (optional)": "هل هناك شيء تودّ إخبارنا به؟ (اختياري)", "Request appointment": "أرسل طلب الحجز", "This is a request. Your appointment is confirmed once we contact you.": "هذا طلب حجز. يتم تأكيد موعدك بعد أن نتواصل معك.", "Request ready": "طلبك جاهز", "Send it on WhatsApp so the clinic receives it right away.": "أرسله عبر واتساب لتصل التفاصيل إلى العيادة فورًا.", "Send on WhatsApp": "أرسل عبر واتساب", "Change details": "تعديل البيانات", "Find the clinic": "موقع العيادة", "Open the map for directions from wherever you are in Alexandria.": "افتح الخريطة لمعرفة الطريق من أي مكان في الإسكندرية.", "Open in Google Maps": "افتح في خرائط Google", "Tamer Fayez dental clinic": "عيادة د. تامر فايز لطب الأسنان", "84 Google reviews": "84 تقييمًا على Google", "Dental clinic in Alexandria": "عيادة أسنان في الإسكندرية", "Get directions": "احصل على الاتجاهات", "Visit the clinic": "زورونا في العيادة", "Address": "العنوان", "38 El-Mosheer Ahmed Ismail St, 2nd floor, Sidi Gaber, Alexandria, Egypt": "38 شارع المشير أحمد إسماعيل، الدور الثاني، سيدي جابر، الإسكندرية، مصر", "Book by phone": "للحجز بالهاتف", "WhatsApp": "واتساب", "Message the clinic": "راسل العيادة", "Other numbers": "أرقام أخرى", "(landline)": "(أرضي)", "Follow us": "تابعنا", "Facebook": "فيسبوك", "Instagram": "إنستجرام", "Working hours": "مواعيد العمل", "Saturday": "السبت", "Sunday": "الأحد", "Monday": "الاثنين", "Tuesday": "الثلاثاء", "Wednesday": "الأربعاء", "Thursday": "الخميس", "Friday": "الجمعة", "12:00 PM – 10:00 PM": "12:00 ظهرًا – 10:00 مساءً", "Closed": "مغلق", "Closed Thursday and Friday": "مغلق الخميس والجمعة", "Open now · Closes 10:00 PM": "مفتوح الآن · يُغلق 10:00 مساءً", "Closed now · Opens today at 12:00 PM": "مغلق الآن · يفتح اليوم 12:00 ظهرًا", "Toothache? Call us and we will fit you in as soon as we can.": "ألم في الأسنان؟ اتصل بنا وسنحجز لك أقرب موعد ممكن.", "Dr. Tamer Fayez Dental Clinic, Alexandria": "عيادة د. تامر فايز لطب الأسنان، الإسكندرية", "Back to top": "العودة للأعلى", "Dr. Tamer Fayez smiling in dark scrubs": "د. تامر فايز مبتسمًا ويرتدي ملابس العمليات الداكنة",  "Meet your dentist": "تعرّف على طبيبك", "Patient rating": "تقييم المرضى", "Consultant in cosmetic and fixed prosthodontics and dental implants.": "استشاري التركيبات التجميلية والثابتة وزراعة الأسنان.", "Known in Alexandria for smile design and restoring teeth so they look and feel natural. He takes time to understand what worries you, shows you what he sees, and only then recommends treatment.": "يُعرف في الإسكندرية بتصميم الابتسامة وترميم الأسنان لتبدو طبيعية ويُحسّ بها كذلك. يخصّص وقتًا ليفهم ما يقلقك، ويُريك ما يراه، ثم يقترح العلاج المناسب.", "Consultant in cosmetic and fixed prosthodontics": "استشاري التركيبات التجميلية والثابتة", "Trusted by patients across Alexandria": "موضع ثقة المرضى في الإسكندرية", "Plan your visit": "خطط لزيارتك",  "Enter your full name.": "أدخل اسمك بالكامل.", "Enter a valid Egyptian mobile number, for example 01012345678.": "أدخل رقم موبايل مصري صحيح، مثل 01012345678.", "Choose a date.": "اختر التاريخ.", "Choose today or a later date.": "اختر اليوم أو تاريخًا لاحقًا.", "The clinic is closed on Thursdays and Fridays. Choose another day.": "العيادة مغلقة يومي الخميس والجمعة. اختر يومًا آخر.", "Choose a time.": "اختر الوقت.", "Choose a treatment.": "اختر العلاج.", "Name": "الاسم", "Phone": "الهاتف", "Date": "التاريخ", "Time": "الوقت", "Dr. Tamer Fayez Dental Clinic, home": "عيادة د. تامر فايز لطب الأسنان، الرئيسية", "Main": "القائمة الرئيسية", "5 out of 5 stars": "5 من 5 نجوم", "4.9 out of 5 stars": "4.9 من 5 نجوم", "Dr. Tamer Fayez smiling, wearing dark scrubs": "د. تامر فايز مبتسمًا ويرتدي ملابس العمليات الداكنة", "Map showing Tamer Fayez Dental Clinic in Sidi Gaber, Alexandria": "خريطة توضح موقع عيادة د. تامر فايز في سيدي جابر، الإسكندرية", "Switch to Arabic": "التبديل إلى العربية", "Switch to English": "Switch to English", "Dr. Tamer Fayez Dental Clinic | Alexandria": "عيادة د. تامر فايز لطب الأسنان | الإسكندرية", "Dr. Tamer Fayez Dental Clinic in Alexandria. Check-ups, whitening, implants, braces and more. Book your appointment online.": "عيادة د. تامر فايز لطب الأسنان في الإسكندرية. كشف وتبييض وزراعة وتقويم وأكثر. احجز موعدك أونلاين."};
+  AR["Back to home"] = "الرجوع للرئيسية";
 
   AR["The clinic is closed on this day. Choose another day."] = "العيادة مغلقة في هذا اليوم. اختر يومًا آخر.";
   AR["No free times on this day. Choose another day."] = "لا توجد مواعيد متاحة في هذا اليوم. اختر يومًا آخر.";
@@ -1164,7 +1162,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   function bookingKeyNow(){ var u = getUser() || {}; return [u.email, lastData.phone, lastData.service, dateEl.value, lastData.timeVal, lastData.notes].join("|"); }
   function resetReview(){
     var st = $("saveStat"); st.className = ""; st.textContent = ""; $("retryNotify").hidden = true; $("wa").hidden = true; $("waHint").hidden = false;
-    var sb = $("submitBooking"); sb.hidden = false; sb.disabled = false; sb.textContent = t("Submit");
+    var sb = $("submitBooking"); sb.hidden = false; sb.disabled = false; sb.textContent = t("Submit"); $("backHome").hidden = true;
   }
   // Each step is reported on its own; nothing says "done" unless that step was really accepted.
   function renderAutoStatus(){
@@ -1195,7 +1193,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   function finishAuto(){
     renderHist(); renderDone(); renderAutoStatus();
     var sb = $("submitBooking");
-    if(booking.saved){ sb.hidden = true; toastForBooking(booking); }
+    if(booking.saved){ sb.hidden = true; $("backHome").hidden = false; toastForBooking(booking); }
     else { sb.hidden = false; sb.disabled = false; sb.textContent = t("Submit"); toast("bad", t(FAIL[booking.reason] || FAIL.server) + (booking.detail ? "  [" + booking.detail + "]" : "")); }
   }
   function finishLegacy(ok){
@@ -1205,7 +1203,7 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
       statusLine(box, "ok", "Your request was saved.");
       statusLine(box, "", "This is a request - the appointment is not confirmed until the clinic confirms it.");
       statusLine(box, "", "Email confirmation and automatic WhatsApp notification are not active yet. You can also notify the clinic on WhatsApp.");
-      sb.hidden = true; toast("warn", t("Your request was saved. Email and automatic WhatsApp notifications are not active yet."));
+      sb.hidden = true; $("backHome").hidden = false; toast("warn", t("Your request was saved. Email and automatic WhatsApp notifications are not active yet."));
     }else{
       statusLine(box, "bad", "We could not save your request. Please press Submit again.");
       sb.hidden = false; sb.disabled = false; sb.textContent = t("Submit"); toast("bad", t("We could not save your request. Please press Submit again."));
@@ -1261,6 +1259,12 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     else{ renderAutoStatus(); statusLine($("saveStat"), "bad", "Could not reach the clinic's system. Try again."); }
   });
 
+  // After the request is saved: clear the form, return to the booking section start and scroll to the top of the site.
+  $("backHome").addEventListener("click", function(){
+    form.reset(); done.classList.remove("show"); form.style.display = "";
+    resetReview(); refreshSlots();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
   $("again").addEventListener("click", function(){
     done.classList.remove("show");
     form.style.display = "";
@@ -1274,14 +1278,14 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
   function applyLang(next){
     lang = next;
     var root = document.documentElement;
-    root.lang = next; root.dir = next === "ar" ? "rtl" : "ltr";
+    root.lang = next; root.dir = "ltr";   // layout stays identical to English; Arabic text direction is handled in CSS (html[lang="ar"])
     var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), n;
     while((n = w.nextNode())){
       if(skip(n.parentElement)) continue;
       if(!textStore.has(n)) textStore.set(n, n.nodeValue);
       var raw = textStore.get(n), key = raw.trim().replace(/\s+/g," ");
       if(!key) continue;
-      n.nodeValue = (next === "ar" && AR[key]) ? AR[key] : raw;
+      n.nodeValue = (next === "ar" && AR[key]) ? (/^\s/.test(raw) ? " " : "") + AR[key] + (/\s$/.test(raw) ? " " : "") : raw;   // keep the single space before/after inline text (e.g. after a phone number)
     }
     document.querySelectorAll("[aria-label],[title],[alt],[placeholder]").forEach(function(el){
       if(el.closest("[data-keep]") && !el.matches(".stars")) return;
@@ -1341,6 +1345,15 @@ html[dir="rtl"] .af input{padding:.5rem 0 .5rem 2.2rem}
     mas.style.setProperty("--lx", (Math.min(n,22)/22*12 - 6).toFixed(1) + "px");
     mas.style.setProperty("--ly", "3px");
   }
+  // The tooth's eyes follow the mouse pointer (or a finger) while the log-in window is open.
+  document.addEventListener("pointermove", function(e){
+    if($("authm").hidden) return;
+    var r = mas.getBoundingClientRect(); if(!r.width || mas.getAttribute("data-mood") === "hide") return;
+    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.40;            // the eyes sit at about 40% of the height
+    var dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx, dy) || 1, k = Math.min(d, 220) / 220;
+    mas.style.setProperty("--lx", (dx / d * 7 * k).toFixed(1) + "px");    // up to 7 units sideways
+    mas.style.setProperty("--ly", (dy / d * 5 * k).toFixed(1) + "px");    // up to 5 units up or down
+  }, {passive:true});
   function fail(key, el){
     if(el) el.focus();
     $("aerr").style.color = ""; $("aerr").textContent = t(key); mood("sad");
@@ -1728,7 +1741,7 @@ window.CLINIC_CHAT_TURNSTILE_SITEKEY = "0x4AAAAAAFbTLBtJEGk_tryo";
 <style>
 /* Natural, compact clinic messenger */
 #clinic-chat-launch{
-  position:fixed;right:22px;bottom:22px;z-index:9998;border:0;border-radius:999px;
+  position:fixed;right:22px;left:auto;bottom:22px;width:auto;max-width:calc(100vw - 28px);z-index:9998;border:0;border-radius:999px;
   background:#e9b44c;color:#10242c;padding:14px 19px;font:700 15px "Hanken Grotesk",system-ui,sans-serif;
   box-shadow:0 8px 28px #0003;cursor:pointer;display:flex;align-items:center;gap:9px;
   transition:background .2s,transform .2s

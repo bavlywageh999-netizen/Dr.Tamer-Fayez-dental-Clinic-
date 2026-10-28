@@ -58,7 +58,7 @@ details div{font-size:.9rem;color:#456;margin-top:.25rem}
 .mascot svg{width:100%;height:100%;display:block}
 .mascot .bob{animation:bob 3s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.mascot .eyes{transform:translate(var(--lx,0px),var(--ly,0px));transition:transform .25s ease}
+.mascot .eyes{transform:translate(var(--lx,0px),var(--ly,0px));transition:transform .12s ease-out}
 .mascot .eye{fill:#10242c;transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
 .mascot .blush{fill:#f4a6a0;opacity:.45}
@@ -1136,6 +1136,14 @@ $("csv").onclick=function(){
 var mas=$("mascot");
 function mood(m){if(m==="sad"){mas.removeAttribute("data-mood");void mas.offsetWidth}mas.setAttribute("data-mood",m)}
 function calm(){mood(document.activeElement===$("pw")&&$("pw").type==="password"?"hide":"happy")}
+// The tooth's eyes follow the mouse pointer on the log-in screen.
+document.addEventListener("pointermove",function(e){
+    var r = mas.getBoundingClientRect(); if(!r.width || mas.getAttribute("data-mood") === "hide") return;
+    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.40;            // the eyes sit at about 40% of the height
+    var dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx, dy) || 1, k = Math.min(d, 220) / 220;
+    mas.style.setProperty("--lx", (dx / d * 7 * k).toFixed(1) + "px");    // up to 7 units sideways
+    mas.style.setProperty("--ly", (dy / d * 5 * k).toFixed(1) + "px");    // up to 5 units up or down
+  },{passive:true});
 function look(){var n=($("em").value||"").length;mas.style.setProperty("--lx",(Math.min(n,22)/22*12-6).toFixed(1)+"px");mas.style.setProperty("--ly","3px")}
 $("em").addEventListener("input",function(){look();calm()});
 $("em").addEventListener("focus",function(){mood("happy");look()});
